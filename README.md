@@ -31,14 +31,15 @@ SmallGreen Spec 定義「一個小型開源專案如何被安全地部署成使�
 
 三條套用路徑：**A** 新專案用 [small-service-template](https://github.com/smallgreen-cloud/small-service-template)／**B** 既有專案由 publish agent 生成契約檔 PR／**C** 外部專案建適配 repo（UPSTREAM.md 鎖 commit，徽章掛 registry 不掛上游）。
 
-## 可執行載體（S1 起實作）
+## 可執行載體（S1 已上線）
 
-- `smallgreen-conformance`——reusable GitHub Actions workflow：契約 schema、wrangler 一致性、secrets 掃描、migration 空庫重放、smoke test。各檔 test_matrix 的「conformance CI」落點由它實現
-- [`small-service-template`](https://github.com/smallgreen-cloud/small-service-template)——起手式範本，用它建的專案天生合規
+- [`conformance`](https://github.com/smallgreen-cloud/conformance)——檢查腳本＋reusable GitHub Actions workflow：契約 schema、免費層允許清單、secrets 掃描、secrets manifest 一致性、migration 空庫重放、本地 smoke。各檔 test_matrix 的「conformance CI」落點由它實現
+- [`small-service-template`](https://github.com/smallgreen-cloud/small-service-template)——起手式範本，用它建的專案天生合規（其 CI 即 conformance 的活體驗證）
 
 ## 相關 repo
 
 - [`registry`](https://github.com/smallgreen-cloud/registry) — 已驗證服務目錄與服務卡
+- [`conformance`](https://github.com/smallgreen-cloud/conformance) — conformance 檢查腳本與 reusable workflow
 - [`small-service-template`](https://github.com/smallgreen-cloud/small-service-template) — 天生合規的起手式範本
 
 ## Green software
