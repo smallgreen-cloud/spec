@@ -1,0 +1,53 @@
+# SmallGreen Spec — Cloudflare 免費層資源允許清單（機器可讀）
+# Profile 判定腳本（SAP-2）讀本檔判定，不寫死在程式碼。
+# 額度變動＝改本檔＋spec minor 版號；每筆額度需附 Evidence Pack 實測或官方文件日期。
+# 版本：與 spec 同步（見 repo tag）
+spec_version: "0.1.0"
+verified_at: "2026-07-30"
+
+allowed:
+  workers:
+    wrangler_keys: ["main"]
+    free_quota: "100,000 requests/day"
+    notes: "事件驅動，天然 scale-to-zero"
+  static_assets:
+    wrangler_keys: ["assets", "pages_build_output_dir"]
+    free_quota: "unlimited requests (Pages/Static Assets)"
+  d1:
+    wrangler_keys: ["d1_databases"]
+    free_quota: "5 GB total, 5M rows read/day"
+  kv:
+    wrangler_keys: ["kv_namespaces"]
+    free_quota: "100k reads/day, 1k writes/day, 1 GB"
+  r2:
+    wrangler_keys: ["r2_buckets"]
+    free_quota: "10 GB storage, Class A 1M/month"
+  cron_triggers:
+    wrangler_keys: ["triggers.crons"]
+    free_quota: "available on free plan"
+    notes: "cron 觸發不違反 scale-to-zero（閒置仍歸零）"
+  workers_ai:
+    wrangler_keys: ["ai"]
+    free_quota: "10,000 Neurons/day（全模型共用 pool，00:00 UTC 重置）"
+    notes: "使用本項者免費等級至多 C，額度緊者標 D（見 service-card SVC-4）"
+  email_routing:
+    wrangler_keys: ["send_email"]
+    free_quota: "free"
+    notes: "郵件類專案屬審慎區，Community Verified 需人工加驗濫用面"
+
+excluded:
+  queues:
+    wrangler_keys: ["queues"]
+    reason: "需 Workers Paid"
+  durable_objects:
+    wrangler_keys: ["durable_objects", "migrations[].new_sqlite_classes"]
+    reason: "免費層僅 SQLite-backed，額度實測未完成；v0.2 依 Evidence Pack 實測評估納入"
+  hyperdrive:
+    wrangler_keys: ["hyperdrive"]
+    reason: "指向外部資料庫，違反 CF-only 原則"
+  vectorize:
+    wrangler_keys: ["vectorize"]
+    reason: "免費層額度實測未完成；v0.2 評估"
+  browser_rendering:
+    wrangler_keys: ["browser"]
+    reason: "免費層額度實測未完成；v0.2 評估"

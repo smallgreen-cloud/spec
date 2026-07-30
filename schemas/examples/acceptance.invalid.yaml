@@ -1,0 +1,13 @@
+# 反例：缺 uninstall_check 區塊（CON-4 必須被 schema 拒絕）
+schema_version: "0.1.0"
+health:
+  path: /healthz
+  expect_status: 200
+smoke:
+  - name: smoke
+    steps:
+      - action: http_request
+    expect: { status: 200 }
+user_acceptance:
+  - task: 登入
+    success_looks_like: 看到首頁

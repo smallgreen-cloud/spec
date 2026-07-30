@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/smallgreen-cloud/spec/schemas/acceptance.schema.json",
+  "title": "SmallGreen acceptance.yaml",
+  "description": "驗收層契約：怎樣算部署成功。部署完成以核心功能驗收通過為準，不以 Build 成功為準（CON-4）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "health", "smoke", "user_acceptance", "uninstall_check"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "expect_status"],
+      "description": "health check：機械可打的健康端點",
+      "properties": {
+        "path": { "type": "string", "description": "如 /healthz；pipeline profile 填最近一次 workflow run 狀態檢查" },
+        "expect_status": { "type": "integer", "minimum": 100, "maximum": 599 },
+        "expect_body_contains": { "type": "string" }
+      }
+    },
+    "smoke": {
+      "type": "array",
+      "minItems": 1,
+      "description": "自動 smoke tests：部署後由裁判層執行，全綠才進使用者驗收",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "steps", "expect"],
+        "properties": {
+          "name": { "type": "string" },
+          "steps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["action"],
+              "properties": {
+                "action": { "type": "string", "enum": ["http_request", "d1_query", "kv_read", "r2_head", "workflow_dispatch", "wait"] },
+                "params": { "type": "object" }
+              }
+            }
+          },
+          "expect": { "type": "object", "description": "斷言（status／body／row_count 等），由裁判層解讀" },
+          "idempotency": { "type": "boolean", "default": false, "description": "true＝此測試連跑兩次結果一致（PIP-6 必至少一項為 true）" }
+        }
+      }
+    },
+    "user_acceptance": {
+      "type": "array",
+      "minItems": 1,
+      "description": "使用者驗收任務：一般人可執行的具體操作（登入、新增一筆、查詢一筆），人勾核、裁判層記錄",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["task", "success_looks_like"],
+        "properties": {
+          "task": { "type": "string", "maxLength": 300 },
+          "success_looks_like": { "type": "string", "maxLength": 300 }
+        }
+      }
+    },
+    "uninstall_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resource_zero_diff"],
+      "description": "移除驗證（SAP-8／PIP-9）：teardown 後與部署前的資源清單 diff",
+      "properties": {
+        "resource_zero_diff": { "type": "boolean", "const": true, "description": "固定 true：宣告接受資源歸零機械驗證" },
+        "excluded_resources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "明示保留的資源（如使用者要求保留的 R2 備份），每項需說明理由，人工裁決"
+        }
+      }
+    }
+  }
+}

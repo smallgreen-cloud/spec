@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1.0",
+  "spec_version": "0.1.0",
+  "project_id": "business-card-mcp",
+  "submitted_at": "2026-07-30T08:00:00Z",
+  "submitter": { "github_handle": "AlanChen75" },
+  "deploy_event": {
+    "date": "2026-07-30",
+    "profile": "small-app",
+    "path": "A-template",
+    "result": "success"
+  },
+  "code_metrics": {
+    "loc": 3200,
+    "dependency_count": 6,
+    "measured_at_commit": "0123456789abcdef0123456789abcdef01234567",
+    "tool": "cloc"
+  },
+  "conformance": {
+    "minutes": 3.5,
+    "result": "pass",
+    "ci_run_url": "https://github.com/smallgreen-cloud/example/actions/runs/1"
+  },
+  "low_carbon": {
+    "scale_to_zero": true,
+    "green_compute": false,
+    "no_idle_infra": true
+  },
+  "free_tier": { "grade": "A", "quota_notes": [] },
+  "agent_matrix": [
+    {
+      "agent": "claude-code",
+      "model": "claude-sonnet-5",
+      "version": "2.x",
+      "result": "autonomous",
+      "human_interventions": 2,
+      "stuck_state": null,
+      "retries": 0,
+      "date": "2026-07-30"
+    }
+  ],
+  "network_behavior_report": {
+    "declared_domains": [],
+    "observed_domains": [],
+    "undeclared": [],
+    "verdict": "pass"
+  },
+  "teardown": {
+    "performed": true,
+    "pass": true,
+    "residual_resources": [],
+    "method": "maintenance.yaml uninstall steps",
+    "date": "2026-07-30"
+  },
+  "user_acceptance": [
+    { "task": "登入並新增一張名片", "result": "pass", "date": "2026-07-30" }
+  ],
+  "verifier_verdict": {
+    "by": "AlanChen75",
+    "usable": true,
+    "note": "登入到搜尋全程順暢，行動版排版正常"
+  }
+}

@@ -1,0 +1,18 @@
+schema_version: "0.1.0"
+health:
+  path: /healthz
+  expect_status: 200
+smoke:
+  - name: 建立並查回一筆名片
+    steps:
+      - action: http_request
+        params: { method: POST, path: /api/cards, body: { name: "測試名片" } }
+      - action: d1_query
+        params: { sql: "SELECT COUNT(*) AS n FROM cards" }
+    expect: { row_n_min: 1 }
+    idempotency: false
+user_acceptance:
+  - task: 用你的 email 登入，新增一張名片，再用搜尋找到它
+    success_looks_like: 搜尋結果列出剛新增的名片
+uninstall_check:
+  resource_zero_diff: true

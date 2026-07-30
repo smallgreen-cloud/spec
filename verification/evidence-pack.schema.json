@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/smallgreen-cloud/spec/schemas/evidence-pack.schema.json",
+  "title": "SmallGreen Evidence Pack",
+  "description": "一次真實驗證部署的 conformance 產物。append-only（EP-2）；不含任何使用者識別欄位（EP-3）；統計對象是專案，永遠不是使用者。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "spec_version", "project_id", "submitted_at", "deploy_event", "code_metrics", "conformance", "low_carbon", "free_tier"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "spec_version": { "type": "string", "description": "驗證當時的 spec 版本（過期判定依據）" },
+    "project_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "對應服務卡 id" },
+    "submitted_at": { "type": "string", "format": "date-time" },
+    "supersedes": { "type": "string", "description": "更正時指向被取代的 Pack 檔名（EP-2）；被指向的 Pack 保留不刪" },
+    "submitter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "github_handle": { "type": "string", "description": "自願提供；可整個省略 submitter 匿名提交" }
+      }
+    },
+    "deploy_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "profile", "path", "result"],
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "profile": { "type": "string", "enum": ["small-app", "pipeline", "small-app+pipeline"] },
+        "path": { "type": "string", "enum": ["A-template", "B-retrofit", "C-adapter"], "description": "套用路徑" },
+        "result": { "type": "string", "enum": ["success", "failed"] },
+        "failure_note": { "type": "string", "description": "失敗也提交——失敗案例是 spec 回饋迴圈的燃料" }
+      }
+    },
+    "code_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loc", "dependency_count", "measured_at_commit"],
+      "properties": {
+        "loc": { "type": "integer", "minimum": 0 },
+        "dependency_count": { "type": "integer", "minimum": 0 },
+        "measured_at_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "tool": { "type": "string", "description": "測量工具（如 cloc、tokei）" }
+      }
+    },
+    "conformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minutes", "result"],
+      "properties": {
+        "minutes": { "type": "number", "minimum": 0, "description": "CI 執行分鐘數（免費額度實測）" },
+        "result": { "type": "string", "enum": ["pass", "fail", "not-run"] },
+        "ci_run_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "low_carbon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scale_to_zero", "green_compute", "no_idle_infra"],
+      "properties": {
+        "scale_to_zero": { "type": "boolean" },
+        "green_compute": { "type": "boolean", "description": "驗證帳號實測 Green Compute 設定" },
+        "no_idle_infra": { "type": "boolean" }
+      }
+    },
+    "free_tier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grade"],
+      "properties": {
+        "grade": { "type": "string", "enum": ["A", "B", "C", "D"] },
+        "quota_notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "agent_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["agent", "model", "version", "result", "human_interventions", "stuck_state", "date"],
+        "properties": {
+          "agent": { "type": "string", "description": "如 claude-code、codex、agy、opencode" },
+          "model": { "type": "string" },
+          "version": { "type": "string" },
+          "result": { "type": "string", "enum": ["autonomous", "assisted", "blocked"] },
+          "human_interventions": { "type": "integer", "minimum": 0 },
+          "stuck_state": { "type": ["string", "null"], "description": "卡關的狀態機狀態；未卡填 null。弱 agent 卡關位置＝spec bug 訊號" },
+          "retries": { "type": "integer", "minimum": 0, "maximum": 3, "description": "retry budget 上限 3（EP-7）" },
+          "date": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "network_behavior_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared_domains", "observed_domains", "undeclared", "verdict"],
+      "properties": {
+        "declared_domains": { "type": "array", "items": { "type": "string" } },
+        "observed_domains": { "type": "array", "items": { "type": "string" }, "description": "靜態掃描＋沙盒動態攔截實測" },
+        "undeclared": { "type": "array", "items": { "type": "string" } },
+        "verdict": { "type": "string", "enum": ["pass", "fail", "human_approved"] },
+        "human_ruling": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["by", "note"],
+          "properties": {
+            "by": { "type": "string" },
+            "note": { "type": "string" }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "undeclared": { "minItems": 1 } } },
+          "then": { "properties": { "verdict": { "enum": ["fail", "human_approved"] } } }
+        },
+        {
+          "if": { "properties": { "verdict": { "const": "human_approved" } } },
+          "then": { "required": ["declared_domains", "observed_domains", "undeclared", "verdict", "human_ruling"] }
+        }
+      ]
+    },
+    "screenshots": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "app_png": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "type": "string" },
+            "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+            "tool": { "type": "string", "description": "如 shot-scraper（dogfooding）" }
+          }
+        },
+        "architecture_svg": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "generated_from"],
+          "properties": {
+            "path": { "type": "string" },
+            "generated_from": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "生成來源 profile.yaml 所在 commit" }
+          }
+        }
+      }
+    },
+    "teardown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["performed", "pass", "residual_resources", "date"],
+      "properties": {
+        "performed": { "type": "boolean" },
+        "pass": { "type": "boolean", "description": "資源歸零 diff 為空＝true；殘留＝uninstall 流程 bug＝spec 回饋" },
+        "residual_resources": { "type": "array", "items": { "type": "string" } },
+        "method": { "type": "string" },
+        "date": { "type": "string", "format": "date" }
+      }
+    },
+    "user_acceptance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["task", "result", "date"],
+        "properties": {
+          "task": { "type": "string" },
+          "result": { "type": "string", "enum": ["pass", "fail"] },
+          "date": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "verifier_verdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["by", "usable", "note"],
+      "description": "體驗判讀（VER-2.7）：機械閘擋不了好不好用，這欄只能人填",
+      "properties": {
+        "by": { "type": "string" },
+        "usable": { "type": "boolean" },
+        "note": { "type": "string", "maxLength": 500 }
+      }
+    }
+  }
+}

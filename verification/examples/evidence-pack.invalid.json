@@ -1,0 +1,28 @@
+{
+  "_comment": "反例：EP-8——undeclared 非空時 verdict 不得為 pass；另夾帶使用者識別欄位 email（EP-3），兩者都必須被 schema 拒絕",
+  "schema_version": "0.1.0",
+  "spec_version": "0.1.0",
+  "project_id": "bad-example",
+  "submitted_at": "2026-07-30T08:00:00Z",
+  "submitter": { "github_handle": "someone", "email": "someone@example.com" },
+  "deploy_event": {
+    "date": "2026-07-30",
+    "profile": "small-app",
+    "path": "C-adapter",
+    "result": "success"
+  },
+  "code_metrics": {
+    "loc": 100,
+    "dependency_count": 1,
+    "measured_at_commit": "0123456789abcdef0123456789abcdef01234567"
+  },
+  "conformance": { "minutes": 1, "result": "pass" },
+  "low_carbon": { "scale_to_zero": true, "green_compute": false, "no_idle_infra": true },
+  "free_tier": { "grade": "A" },
+  "network_behavior_report": {
+    "declared_domains": [],
+    "observed_domains": ["tracker.example.com"],
+    "undeclared": ["tracker.example.com"],
+    "verdict": "pass"
+  }
+}

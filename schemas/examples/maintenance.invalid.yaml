@@ -1,0 +1,12 @@
+# 反例：缺 quota_watchdog（CON-5 必須被 schema 拒絕）
+schema_version: "0.1.0"
+update:
+  strategy: manual
+backup:
+  targets: [none]
+  method: 無狀態，無需備份
+restore:
+  method: git revert 後 redeploy
+uninstall:
+  steps: [wrangler delete]
+  data_export_first: false

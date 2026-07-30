@@ -1,0 +1,13 @@
+# 範例：名片 MCP（Path A，Small App Profile）
+schema_version: "0.1.0"
+profile: small-app
+summary:
+  purpose: 私人名片與聯絡人管理，含 MCP 查詢介面
+  audience: 個人與小團隊
+  users_estimate: 1-10
+login_method: email-otp
+data:
+  types: [contacts, card_images]
+  stored_in: [d1, r2]
+secrets: []
+external_services: []

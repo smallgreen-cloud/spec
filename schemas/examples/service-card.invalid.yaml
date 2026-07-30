@@ -1,0 +1,17 @@
+# 反例：宣告 community-verified 卻無 verifiers／evidence_packs／scenario_stories（SVC-2 必須被 schema 拒絕——等級不可宣告取得）
+id: fake-verified
+name: Fake Verified
+one_liner: 測試反例
+categories: [monitoring-analytics]
+profile: small-app
+repo:
+  upstream: example/fake
+verification:
+  level: community-verified
+  spec_version: "0.1.0"
+free_tier_grade: A
+low_carbon:
+  scale_to_zero: true
+  green_compute: false
+  no_idle_infra: true
+maintenance_status: active

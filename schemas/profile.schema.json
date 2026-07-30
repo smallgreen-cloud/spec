@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/smallgreen-cloud/spec/schemas/profile.schema.json",
+  "title": "SmallGreen profile.yaml",
+  "description": "部署前判定層契約。資源宣告一律看 wrangler 設定（唯一真相源），本檔刻意不提供資源欄位（CON-2）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile", "summary", "data", "secrets", "external_services"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^0\\.1\\.\\d+$",
+      "description": "本檔遵循的契約 schema 版本"
+    },
+    "profile": {
+      "type": "string",
+      "enum": ["small-app", "pipeline", "small-app+pipeline"],
+      "description": "宣告受哪個 Profile 判定（雙平台整合專案宣告複合值，兩檔各自出報告）"
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "audience", "users_estimate"],
+      "properties": {
+        "purpose": { "type": "string", "maxLength": 200, "description": "一句話用途（給一般使用者看，非技術描述）" },
+        "audience": { "type": "string", "maxLength": 200 },
+        "users_estimate": { "type": "string", "description": "預期使用人數，如 1-10" }
+      }
+    },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "commit"],
+      "description": "Path C 適配 repo 必填；須與 UPSTREAM.md 一致（CON-6）",
+      "properties": {
+        "repo": { "type": "string", "pattern": "^[\\w.-]+/[\\w.-]+$" },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "license": { "type": "string" }
+      }
+    },
+    "login_method": {
+      "type": "string",
+      "enum": ["none", "email-otp", "github-oauth", "cloudflare-access", "token", "other"],
+      "description": "登入方式；other 需在 data.notes 說明"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["types", "stored_in"],
+      "properties": {
+        "types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "儲存的資料類型（如 contacts、notes、images）"
+        },
+        "stored_in": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["d1", "kv", "r2", "repo", "issues", "none"] },
+          "minItems": 1
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "secrets": {
+      "type": "array",
+      "description": "secrets manifest（SAP-3／PIP-4）。空陣列＝明示零 secret，缺欄位＝schema fail",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "purpose", "required", "how_to_obtain"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+          "purpose": { "type": "string", "maxLength": 200 },
+          "required": { "type": "boolean" },
+          "how_to_obtain": { "type": "string", "description": "一般使用者可照做的取得步驟或文件連結" },
+          "free_tier": { "type": "boolean", "description": "該外部服務是否有免費層" }
+        }
+      }
+    },
+    "external_services": {
+      "type": "array",
+      "description": "runtime 會連線的宣告外部服務（SAP-5／PIP-7 行為分析器 diff 基準）。空陣列＝宣告零外連",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["domain", "purpose", "data_sent"],
+        "properties": {
+          "domain": { "type": "string", "description": "如 api.telegram.org；萬用字元僅允許最左標籤" },
+          "purpose": { "type": "string", "maxLength": 200 },
+          "data_sent": { "type": "string", "description": "送出什麼資料（信任揭露核心欄位）" }
+        }
+      }
+    },
+    "pipeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["estimated_minutes_per_run"],
+      "description": "profile 含 pipeline 時必填（PIP-3）",
+      "properties": {
+        "estimated_minutes_per_run": { "type": "number", "minimum": 0 },
+        "schedule_note": { "type": "string" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "profile": { "enum": ["pipeline", "small-app+pipeline"] } } },
+      "then": { "required": ["schema_version", "profile", "summary", "data", "secrets", "external_services", "pipeline"] }
+    }
+  ]
+}

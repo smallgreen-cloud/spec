@@ -1,0 +1,15 @@
+# 反例：夾帶資源宣告欄位（CON-2 必須被 schema 拒絕——wrangler 才是資源真相源）
+schema_version: "0.1.0"
+profile: small-app
+summary:
+  purpose: 測試反例
+  audience: 測試
+  users_estimate: "1"
+data:
+  types: [notes]
+  stored_in: [d1]
+secrets: []
+external_services: []
+d1_databases:
+  - binding: DB
+    database_name: should-not-be-here

@@ -1,0 +1,18 @@
+# 範例：Discovered 等級最小卡（batch-01 首行專案）
+id: sink
+name: Sink
+one_liner: 自己帳號裡的短網址服務，附點擊統計
+categories: [website-shortlink-content]
+profile: small-app
+repo:
+  upstream: miantiao-me/Sink
+  license: AGPL-3.0
+verification:
+  level: discovered
+  spec_version: "0.1.0"
+free_tier_grade: B
+low_carbon:
+  scale_to_zero: true
+  green_compute: false
+  no_idle_infra: true
+maintenance_status: active

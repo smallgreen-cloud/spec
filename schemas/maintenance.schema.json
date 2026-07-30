@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/smallgreen-cloud/spec/schemas/maintenance.schema.json",
+  "title": "SmallGreen maintenance.yaml",
+  "description": "維護層契約：更新、備份、回復、額度監控、完整移除（CON-5）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "update", "backup", "restore", "uninstall", "quota_watchdog"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "update": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy"],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["upstream-pr", "template-sync", "manual"],
+          "description": "upstream-pr＝追蹤上游差異開更新 PR（Path C 標準）；更新前必備份、Preview 測過才升級"
+        },
+        "upstream_check": { "type": "string", "description": "檢查上游新版的方式（如 gh api releases）" },
+        "preview_before_promote": { "type": "boolean", "const": true }
+      }
+    },
+    "backup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targets", "method"],
+      "properties": {
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "enum": ["d1", "kv", "r2", "repo", "none"] },
+          "description": "none＝明示無狀態、無可備份資料"
+        },
+        "method": { "type": "string", "description": "如 wrangler d1 export；一般使用者可照做" },
+        "frequency_hint": { "type": "string" }
+      }
+    },
+    "restore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method"],
+      "properties": {
+        "method": { "type": "string", "description": "從備份回復的步驟；程式碼回復走 git revert＋redeploy" },
+        "d1_time_travel_note": { "type": "string", "description": "免費層 Time Travel 保留天數限制的明示提醒" }
+      }
+    },
+    "uninstall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps", "data_export_first"],
+      "description": "完整移除路徑（SAP-8／PIP-9 的執行面）。每輪 agent 矩陣驗證的 teardown 即以本區塊為腳本",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "依序執行的移除步驟（刪 Worker、刪 D1、刪 KV、刪 R2、刪 repo）"
+        },
+        "data_export_first": { "type": "boolean", "description": "移除前是否先引導資料匯出" }
+      }
+    },
+    "quota_watchdog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["watch"],
+      "description": "額度監控宣告：哪些額度會緊、怎麼看",
+      "properties": {
+        "watch": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["resource", "free_limit", "check_method"],
+            "properties": {
+              "resource": { "type": "string", "description": "如 workers_ai_neurons、d1_reads" },
+              "free_limit": { "type": "string" },
+              "check_method": { "type": "string", "description": "使用者或 watchdog 如何查用量（dashboard 路徑或 API）" },
+              "alert_threshold": { "type": "string" }
+            }
+          }
+        },
+        "none_reason": { "type": "string", "description": "宣告免監控時必填理由（如純靜態站）" }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+schema_version: "0.1.0"
+update:
+  strategy: upstream-pr
+  upstream_check: gh api repos/smallgreen-cloud/example/releases/latest
+  preview_before_promote: true
+backup:
+  targets: [d1, r2]
+  method: wrangler d1 export CARD_DB --output backup.sql；R2 用 rclone 同步
+  frequency_hint: 每月或大更新前
+restore:
+  method: wrangler d1 execute CARD_DB --file backup.sql；程式碼走 git revert 後 redeploy
+  d1_time_travel_note: 免費層 Time Travel 僅保留數天，勿依賴它當唯一備份
+uninstall:
+  steps:
+    - wrangler delete（Worker）
+    - wrangler d1 delete CARD_DB
+    - wrangler r2 bucket delete card-images
+    - 刪除 GitHub repo 副本
+  data_export_first: true
+quota_watchdog:
+  watch:
+    - resource: d1_rows_read
+      free_limit: 5M rows/day
+      check_method: Cloudflare dashboard → D1 → metrics
+      alert_threshold: "80%"
