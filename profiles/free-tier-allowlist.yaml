@@ -2,7 +2,7 @@
 # Profile 判定腳本（SAP-2）讀本檔判定，不寫死在程式碼。
 # 額度變動＝改本檔＋spec minor 版號；每筆額度需附 Evidence Pack 實測或官方文件日期。
 # 版本：與 spec 同步（見 repo tag）
-spec_version: "0.1.1"
+spec_version: "0.1.2"
 verified_at: "2026-07-30"
 
 allowed:
@@ -37,15 +37,19 @@ allowed:
   analytics_engine:
     wrangler_keys: ["analytics_engine_datasets"]
     free_quota: "100,000 data points written/day, 10,000 read queries/day（Workers Free）"
-    notes: "2026-07-30 依官方 pricing 頁納入（S2 Sink 打標準時發現缺項）；官方標注目前未實際計費、未來數月開始，額度變動需複查"
+    notes: "2026-07-30 依官方 pricing 頁納入（S2 Sink 打標準時發現缺項）；官方標注目前未實際計費、未來數月開始，額度變動需複查。部署前需在 dashboard 一次性啟用（error 10089，無公開 API）"
+  durable_objects_sqlite:
+    wrangler_keys: ["durable_objects"]
+    free_quota: "100,000 requests/day, 13,000 GB-s/day, SQL 5 GB total（Workers Free）"
+    notes: "2026-07-30 依官方 pricing 頁納入（S2 UptimeFlare 打標準時發現排除項擋住首批專案）。條件式：僅限 SQLite-backed——migrations 只准 new_sqlite_classes，出現 new_classes（KV-backed，付費限定）即 fail"
 
 excluded:
   queues:
     wrangler_keys: ["queues"]
     reason: "需 Workers Paid"
-  durable_objects:
-    wrangler_keys: ["durable_objects", "migrations[].new_sqlite_classes"]
-    reason: "免費層僅 SQLite-backed，額度實測未完成；v0.2 依 Evidence Pack 實測評估納入"
+  durable_objects_kv_backed:
+    wrangler_keys: ["migrations[].new_classes"]
+    reason: "KV-backed DO 為付費限定；免費層限 SQLite-backed（見 allowed.durable_objects_sqlite）"
   hyperdrive:
     wrangler_keys: ["hyperdrive"]
     reason: "指向外部資料庫，違反 CF-only 原則"
