@@ -19,12 +19,14 @@
 
 由 profile.yaml 機械判定，取符合條件的最低等級：
 
-| 等級 | 條件（全部由契約欄位判定） |
+| 等級 | 條件（全部由契約欄位判定；v0.2 起 resource_usage 標 required: false 的資源不參與判級，改列 quota_note——issue #3） |
 |---|---|
-| A | secrets 為空陣列＋不需自有網域＋不用 workers_ai |
+| A | required secrets 為空＋不需自有網域＋不必用 workers_ai |
 | B | 僅缺 A 的「不需自有網域」（需綁自己的 domain） |
 | C | secrets 含 required 外部 key 且該服務 free_tier: true |
-| D | 使用共用額度緊的資源（workers_ai）或任一 required key 無免費層——卡上必附 quota_watchdog 摘要 |
+| D | **必用**（required 或未標注）workers_ai 等共用額度緊資源，或任一 required key 無免費層——卡上必附 quota_watchdog 摘要 |
+
+案例：Sink 的 AI slug 建議為選配（resource_usage: workers_ai required: false）→ v0.2 判 C 不判 D，AI 額度列 quota_note。
 
 ## low_carbon 推導規則（SVC-3）
 

@@ -18,7 +18,7 @@
 | conformance.minutes | 免費額度實測（free_tier 佐證） | CI log |
 | low_carbon | 服務卡低碳標示 | wrangler 設定推導 |
 | spec_version | 驗證過期判定 | 本 Pack |
-| agent_matrix | 服務卡「相容 agents」徽章；弱 agent 卡關位置＝spec bug 訊號 | 驗證 harness |
+| agent_matrix | 服務卡「相容 agents」徽章；弱 agent 卡關位置＝spec bug 訊號。v0.2 增 role 欄（deployer/verifier）：徽章分「誰裝得起來」與「誰驗過」（issue #5） | 驗證 harness |
 | network_behavior_report | 資料流向揭露（信任信號） | 行為分析器 |
 | screenshots | 目錄站主圖（真實截圖，禁 mockup／AI 生圖） | shot-scraper（dogfooding：候選池工具給候選池截圖） |
 | teardown | 「退得乾淨」承諾的證據；同測 maintenance.yaml uninstall 條款 | 驗證 harness |

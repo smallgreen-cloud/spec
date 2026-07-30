@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "spec_version", "project_id", "submitted_at", "deploy_event", "code_metrics", "conformance", "low_carbon", "free_tier"],
   "properties": {
-    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "schema_version": { "type": "string", "pattern": "^0\\.[12]\\.\\d+$" },
     "spec_version": { "type": "string", "description": "驗證當時的 spec 版本（過期判定依據）" },
     "project_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "對應服務卡 id" },
     "submitted_at": { "type": "string", "format": "date-time" },
@@ -78,6 +78,12 @@
         "additionalProperties": false,
         "required": ["agent", "model", "version", "result", "human_interventions", "stuck_state", "date"],
         "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["deployer", "verifier"],
+            "default": "deployer",
+            "description": "v0.2（issue #5）：矩陣分工。deployer＝照 AGENTS.md 部署；verifier＝不部署、獨立驗證既有部署（result: autonomous＝獨立完成驗證）。服務卡徽章據此分「誰裝得起來」與「誰驗過」"
+          },
           "agent": { "type": "string", "description": "如 claude-code、codex、agy、opencode" },
           "model": { "type": "string" },
           "version": { "type": "string" },

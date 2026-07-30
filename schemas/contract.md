@@ -23,7 +23,7 @@
 |---|---|---|---|
 | CON-1 | 三份契約檔存在且各自通過對應 JSON Schema 驗證 | YAML parse → schema validate | 無契約＝agent 只能語意推測（RedAccess 事故根源） |
 | CON-2 | profile.yaml 不含資源宣告欄位（schema `additionalProperties: false` 機械保證） | schema 驗證即涵蓋 | 雙真相源分岔（自有 SecondBrain 兩路寫入撞車史） |
-| CON-3 | secrets manifest 與程式碼實際引用一致：**runtime 程式碼**引用的 env/secret 名 ⊆ manifest ∪ wrangler vars（掃描範圍排除 tests/、build 工具腳本、生成的型別宣告檔；平台標準變數 NODE_ENV/CI 等不計）。已知限制：framework 隱式 env 映射（如 Nuxt runtimeConfig 的 NUXT_* 前綴）靜態掃描抓不到，v0.2 評估 framework-aware 掃描 | 靜態掃描 env 引用 × manifest diff，宣告外引用＝fail | 「部署成功但跑不動」：缺 key 在 runtime 才爆；範圍教訓來自 S2 Sink 實測（18 個假陽性收斂到 2 個真項） |
+| CON-3 | secrets manifest 與程式碼實際引用一致：**runtime 程式碼**引用的 env/secret 名 ⊆ manifest ∪ wrangler vars（掃描範圍排除 tests/、build 工具腳本、生成的型別宣告檔；平台標準變數 NODE_ENV/CI/VITEST 等不計）。**v0.2 收斂決策（issue #2）**：framework 隱式 env 映射（Nuxt runtimeConfig 的 NUXT_* 等）維持「已知限制＋補償控制」——由 publish agent／適配者人工補列 manifest（Sink 實證可行），framework-aware 自動掃描（需 per-framework 映射表、regex 解析脆弱）列 v0.3 檢查器路線圖，不阻擋 v0.2 | 靜態掃描 env 引用 × manifest diff，宣告外引用＝fail | 「部署成功但跑不動」：缺 key 在 runtime 才爆；範圍教訓來自 S2 Sink 實測（18 個假陽性收斂到 2 個真項） |
 | CON-4 | acceptance.yaml 至少含：1 個 health check、1 個 smoke test、1 個 user acceptance task、uninstall 驗證區塊 | schema required 欄位 | 「Build 成功＝部署完成」謬誤（原計畫明文反對） |
 | CON-5 | maintenance.yaml 至少含：update、backup、restore、uninstall 四流程＋quota watchdog 宣告 | schema required 欄位 | Heroku 難民無遷移路徑；D1 免費層 Time Travel 有限 |
 | CON-6 | 適配 repo（Path C）必含 `UPSTREAM.md` 鎖定上游 commit hash，且 profile.yaml `upstream` 欄位與之一致 | 檔案存在＋hash 格式＋兩處一致性 diff | fork 與上游差異累積失控（原計畫風險清單） |

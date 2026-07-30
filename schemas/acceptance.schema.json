@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "health", "smoke", "user_acceptance", "uninstall_check"],
   "properties": {
-    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "schema_version": { "type": "string", "pattern": "^0\\.[12]\\.\\d+$" },
     "health": {
       "type": "object",
       "additionalProperties": false,

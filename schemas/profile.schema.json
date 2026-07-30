@@ -9,8 +9,8 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "pattern": "^0\\.1\\.\\d+$",
-      "description": "本檔遵循的契約 schema 版本"
+      "pattern": "^0\\.[12]\\.\\d+$",
+      "description": "本檔遵循的契約 schema 版本（0.1.x 契約於 0.2 下仍有效——v0.2 全為 additive 變更）"
     },
     "profile": {
       "type": "string",
@@ -56,8 +56,9 @@
         },
         "stored_in": {
           "type": "array",
-          "items": { "type": "string", "enum": ["d1", "kv", "r2", "repo", "issues", "none"] },
-          "minItems": 1
+          "items": { "type": "string", "enum": ["d1", "kv", "r2", "analytics_engine", "repo", "issues", "none"] },
+          "minItems": 1,
+          "description": "v0.2（issue #6）：增 analytics_engine（AE 型服務的事件儲存，90 天滾動保留）"
         },
         "notes": { "type": "string" }
       }
@@ -86,11 +87,36 @@
         "additionalProperties": false,
         "required": ["domain", "purpose", "data_sent"],
         "properties": {
-          "domain": { "type": "string", "description": "如 api.telegram.org；萬用字元僅允許最左標籤" },
+          "domain": { "type": "string", "description": "kind=fixed 時為真域名（萬用字元僅允許最左標籤）；kind 為 user-directed/user-configured 時為標示字串（如 (user-directed)）" },
+          "kind": {
+            "type": "string",
+            "enum": ["fixed", "user-directed", "user-configured"],
+            "default": "fixed",
+            "description": "v0.2（issue #1）：fixed＝固定域名，行為分析器 diff 直接比對；user-directed＝目標由使用者輸入決定（連結預覽類），驗「不夾帶服務憑證」；user-configured＝目標由部署者設定（webhook 類），驗「預設關閉」。非 fixed 類需人工裁決背書"
+          },
           "purpose": { "type": "string", "maxLength": 200 },
           "data_sent": { "type": "string", "description": "送出什麼資料（信任揭露核心欄位）" }
         }
       }
+    },
+    "resource_usage": {
+      "type": "array",
+      "description": "v0.2（issue #3）：wrangler 宣告資源的必用／選配標注；未列者視為必用。SVC-4 免費等級判定據此區分",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["resource", "required", "feature"],
+        "properties": {
+          "resource": { "type": "string", "description": "allowlist 資源鍵，如 workers_ai" },
+          "required": { "type": "boolean" },
+          "feature": { "type": "string", "maxLength": 200, "description": "選配時對應哪個功能（不啟用會少什麼）" }
+        }
+      }
+    },
+    "alt_deployment": {
+      "type": "array",
+      "description": "v0.2（issue #4）：repo 內存在的替代部署路徑揭露（Dockerfile/terraform 等）。SAP-4 改為：常駐基礎設施檔存在但未在此揭露＝fail；已揭露＝pass＋服務卡標注",
+      "items": { "type": "string", "enum": ["docker", "docker-compose", "terraform", "procfile", "kubernetes", "other"] }
     },
     "pipeline": {
       "type": "object",

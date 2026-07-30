@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "update", "backup", "restore", "uninstall", "quota_watchdog"],
   "properties": {
-    "schema_version": { "type": "string", "pattern": "^0\\.1\\.\\d+$" },
+    "schema_version": { "type": "string", "pattern": "^0\\.[12]\\.\\d+$" },
     "update": {
       "type": "object",
       "additionalProperties": false,

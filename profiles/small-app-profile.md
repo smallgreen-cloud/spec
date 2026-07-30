@@ -18,8 +18,8 @@
 | SAP-1 | repo 內存在至少一個可解析的 wrangler 設定（wrangler.jsonc / wrangler.toml / wrangler.json；根目錄或子目錄深度 ≤3——monorepo 常見 packages/*/wrangler.json），且全部找到的設定檔皆可解析 | find_all_wrangler 非空＋逐檔 parse 成功 | 無 wrangler＝無法宣告式部署；根目錄限定誤傷 monorepo（S2 Counterscale 實測，v0.1.3 精修） |
 | SAP-2 | repo 內**所有** wrangler 設定檔（含子目錄多 worker）宣告的資源全部落在 free-tier-allowlist.yaml `allowed` 清單內；條件式資源（durable_objects 限 SQLite-backed）須滿足清單標注條件 | 解析全部 wrangler 設定 × 允許清單 diff，宣告外 key 或條件不符＝fail＋列名（含設定檔路徑） | Heroku/Glitch 難民：付費資源綁定＝免費承諾破產；多 worker 盲區來自 S2 UptimeFlare 實測 |
 | SAP-3 | runtime 所需 secrets 全數列於 `.smallgreen/profile.yaml` 的 secrets manifest，且 repo 內零真實 secret | manifest 存在性＋secret 掃描（gitleaks 規則集）零命中 | RedAccess 掃描 400 組外洩金鑰；自有 pre-commit hook 踩雷史 |
-| SAP-4 | repo 不含常駐程序基礎設施檔（Dockerfile、docker-compose.yml、Procfile、k8s manifest） | 檔案清單掃描零命中 | 範圍紀律：VPS/容器不支援（計畫核心定位） |
-| SAP-5 | 程式碼 outbound 網路目標全數被 profile.yaml `external_services` 宣告涵蓋 | 行為分析器（靜態掃描＋沙盒動態攔截）diff 零宣告外 domain | Smithery 抽查 22/100 有安全問題；README 與實際行為不符 |
+| SAP-4 | v0.2（issue #4）：常駐程序基礎設施檔（Dockerfile、docker-compose.yml、Procfile）**存在時必須在 profile.yaml `alt_deployment` 揭露**且 CF 免費層路徑（wrangler）獨立完整；存在且未揭露＝fail。適配 repo 亦可以 patch 移除 | 檔案掃描 × alt_deployment 欄位交叉比對 | 範圍紀律：VPS/容器不支援；一刀切誤傷選配替代路徑（S2 UptimeFlare Dockerfile 實測，v0.2 精修） |
+| SAP-5 | 程式碼 outbound 網路目標全數被 profile.yaml `external_services` 宣告涵蓋。v0.2（issue #1）：宣告分三類（kind）——fixed 直接 diff 比對；user-directed（目標由使用者輸入決定，如連結預覽）驗「不夾帶服務憑證、不打宣告外固定 domain」；user-configured（webhook 類）驗「預設關閉」。非 fixed 類需人工裁決背書。範圍限自動發出的請求，HTML 內 `<a href>` 點擊連結不屬之（S2 Counterscale verifier 口徑假陽性教訓） | 行為分析器（靜態掃描＋沙盒動態攔截）diff；kind 分類驗證 | Smithery 抽查 22/100 有安全問題；Sink 連結預覽（域名不可枚舉）實測 |
 | SAP-6 | repo 具 OSI-approved license（GitHub API license 欄位非空且非 NOASSERTION） | gh api 查詢 | registry batch-01：9 項無 license 專案無法安全複製 |
 | SAP-7 | 照 AGENTS.md 標準流程部署，使用者確認次數 ≤ 3 | agent matrix 驗證紀錄 human_interventions ≤ 3 | 原計畫成功條件「主要確認不超過三次」 |
 | SAP-8 | 具備完整移除路徑：maintenance.yaml 定義 uninstall 步驟，執行後 CF 帳號資源歸零 | teardown 後 wrangler/API 資源清單與部署前 diff 為空 | Audacity 式信任危機的反面：退得乾淨才敢裝 |

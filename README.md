@@ -2,7 +2,7 @@
 
 > 小型雲端服務的部署標準 | The deployment standard for small, green, self-owned cloud services.
 
-**Status: v0.1.0 — 六件套齊備；Evidence Pack schema 已凍結（2026-07-30 簽核）**
+**Status: v0.2.0 — 六件套齊備；Evidence Pack schema 已凍結（2026-07-30 簽核，v0.2 僅 additive 增欄）；S2 三專案×多 agent 實跑回饋（issues #1-#6）已收斂**
 
 ## 這是什麼
 
