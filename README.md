@@ -2,7 +2,7 @@
 
 > 小型雲端服務的部署標準 | The deployment standard for small, green, self-owned cloud services.
 
-**Status: v0.1.0 draft — 六件套齊備，凍結審閱中**
+**Status: v0.1.0 — 六件套齊備；Evidence Pack schema 已凍結（2026-07-30 簽核）**
 
 ## 這是什麼
 
@@ -47,4 +47,4 @@ SmallGreen Spec 定義「一個小型開源專案如何被安全地部署成使�
 
 ---
 
-發起：Alan Chen（[cooperation.tw](https://cooperation.tw)）。License：待定（spec 文件傾向 CC-BY-4.0，程式碼傾向 Apache-2.0，v0.1 凍結前定案）。
+發起：Alan Chen（[cooperation.tw](https://cooperation.tw)）。License：規格文件 CC-BY-4.0／程式碼與機器可讀資產 Apache-2.0（見 [LICENSE.md](LICENSE.md)，2026-07-30 定案）。

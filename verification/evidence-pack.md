@@ -1,4 +1,7 @@
-# Evidence Pack 規格 v0.1（S0 凍結件）
+# Evidence Pack 規格 v0.1（已凍結）
+
+> **凍結狀態：schema_version 0.1.0 已於 2026-07-30 簽核凍結（S0 唯一不可逆件）。**
+> 自此：新增欄位＝minor 版且必過欄位正當性判準（EP-4）；欄位刪除或語意變更＝major 版；舊 Pack 永不依新 schema 重寫（GOV-6）。
 
 > 六件套 #4b。Evidence Pack＝一次真實驗證部署的 conformance 產物，是整個計畫的資料心臟：
 > **驗證統計＝碳宣稱出處＝論文資料集，一條管線三次收穫。**
