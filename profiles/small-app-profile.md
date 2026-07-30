@@ -15,7 +15,7 @@
 
 | ID | 條款（可判定句） | 判定方式 | 來源故障 |
 |---|---|---|---|
-| SAP-1 | repo 根目錄存在可解析的 wrangler 設定（wrangler.jsonc / wrangler.toml / wrangler.json 其一） | 檔案存在＋parse 成功 | 無 wrangler＝無法宣告式部署（Deploy Button 前提） |
+| SAP-1 | repo 內存在至少一個可解析的 wrangler 設定（wrangler.jsonc / wrangler.toml / wrangler.json；根目錄或子目錄深度 ≤3——monorepo 常見 packages/*/wrangler.json），且全部找到的設定檔皆可解析 | find_all_wrangler 非空＋逐檔 parse 成功 | 無 wrangler＝無法宣告式部署；根目錄限定誤傷 monorepo（S2 Counterscale 實測，v0.1.3 精修） |
 | SAP-2 | repo 內**所有** wrangler 設定檔（含子目錄多 worker）宣告的資源全部落在 free-tier-allowlist.yaml `allowed` 清單內；條件式資源（durable_objects 限 SQLite-backed）須滿足清單標注條件 | 解析全部 wrangler 設定 × 允許清單 diff，宣告外 key 或條件不符＝fail＋列名（含設定檔路徑） | Heroku/Glitch 難民：付費資源綁定＝免費承諾破產；多 worker 盲區來自 S2 UptimeFlare 實測 |
 | SAP-3 | runtime 所需 secrets 全數列於 `.smallgreen/profile.yaml` 的 secrets manifest，且 repo 內零真實 secret | manifest 存在性＋secret 掃描（gitleaks 規則集）零命中 | RedAccess 掃描 400 組外洩金鑰；自有 pre-commit hook 踩雷史 |
 | SAP-4 | repo 不含常駐程序基礎設施檔（Dockerfile、docker-compose.yml、Procfile、k8s manifest） | 檔案清單掃描零命中 | 範圍紀律：VPS/容器不支援（計畫核心定位） |
