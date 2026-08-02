@@ -1,6 +1,7 @@
-# Evidence Pack 規格 v0.1（已凍結）
+# Evidence Pack 規格（已凍結；現行 schema_version 0.3.0）
 
 > **凍結狀態：schema_version 0.1.0 已於 2026-07-30 簽核凍結（S0 唯一不可逆件）。**
+> 版本史（全 additive）：0.2.0＝agent_matrix 增 role 欄（issue #5，spec v0.2.0）；0.3.0＝增 maturity_reached 欄（issue #7，spec v0.2.1）。
 > 自此：新增欄位＝minor 版且必過欄位正當性判準（EP-4）；欄位刪除或語意變更＝major 版；舊 Pack 永不依新 schema 重寫（GOV-6）。
 
 > 六件套 #4b。Evidence Pack＝一次真實驗證部署的 conformance 產物，是整個計畫的資料心臟：
@@ -23,6 +24,7 @@
 | screenshots | 目錄站主圖（真實截圖，禁 mockup／AI 生圖） | shot-scraper（dogfooding：候選池工具給候選池截圖） |
 | teardown | 「退得乾淨」承諾的證據；同測 maintenance.yaml uninstall 條款 | 驗證 harness |
 | user_acceptance＋verifier_verdict | Community Verified 晉級證據 | 人工執行、裁判層記錄 |
+| maturity_reached | 服務卡「驗證深度」（只 build 過 vs URL 通 vs 功能驗收過 vs 拆得乾淨）——比 result 二值粗粒度更誠實的驗證標示。v0.3 增（issue #7） | 裁判判級 |
 
 ## 條款（Requirements）
 

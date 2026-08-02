@@ -7,7 +7,12 @@
   "additionalProperties": false,
   "required": ["schema_version", "spec_version", "project_id", "submitted_at", "deploy_event", "code_metrics", "conformance", "low_carbon", "free_tier"],
   "properties": {
-    "schema_version": { "type": "string", "pattern": "^0\\.[12]\\.\\d+$" },
+    "schema_version": { "type": "string", "pattern": "^0\\.[123]\\.\\d+$" },
+    "maturity_reached": {
+      "type": "string",
+      "enum": ["D1", "D2", "D3", "D4", "D4-degraded", "D5a", "D5b"],
+      "description": "v0.3（issue #7）：本次驗證達到的部署成熟度（裁判判級，映射規則見研究線 maturity-model）。D1 Buildable／D2 Deployable（URL 200）／D3 Operational／D4 Functionally Valid（驗收全過）／D4-degraded（降級後驗收過）／D5a Removable（teardown 歸零）／D5b Update-Survivable。社群用途＝服務卡顯示驗證深度（只 build 過 vs 功能驗收過 vs 拆得乾淨），EP-4 已審"
+    },
     "spec_version": { "type": "string", "description": "驗證當時的 spec 版本（過期判定依據）" },
     "project_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "對應服務卡 id" },
     "submitted_at": { "type": "string", "format": "date-time" },
