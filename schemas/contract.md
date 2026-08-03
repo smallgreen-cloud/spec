@@ -28,6 +28,8 @@
 | CON-5 | maintenance.yaml 至少含：update、backup、restore、uninstall 四流程＋quota watchdog 宣告 | schema required 欄位 | Heroku 難民無遷移路徑；D1 免費層 Time Travel 有限 |
 | CON-6 | 適配 repo（Path C）必含 `UPSTREAM.md` 鎖定上游 commit hash，且 profile.yaml `upstream` 欄位與之一致 | 檔案存在＋hash 格式＋兩處一致性 diff | fork 與上游差異累積失控（原計畫風險清單） |
 | CON-7 | repo 內零真實 secret（契約檔本身亦受掃描） | gitleaks 規則集零命中 | 同 SAP-3 |
+| CON-8 | **乾淨環境建置閘（v0.3，issue #11）**：在 fresh clone ＋ 依 lockfile 的標準安裝指令下，`profile.build_requirements.gates` 列出的每個指令依序執行皆 exit 0。未宣告 gates 者本條 skip（不強制專案必須有驗證腳本，但「你自己說要跑的，乾淨環境要能跑」） | conformance CI 獨立 job：clone → 安裝 → 依序執行 gates | business-card-mcp Path A 首發（run 35）：專案未宣告 @types/node 但程式碼 import `node:*`，乾淨 clone + npm ci 後 typecheck 立刻 TS2307；維護者本機因 node_modules 累積而未遇到——「我這邊可以跑」在標準承諾「照契約就能部署」下是實質破口 |
+| CON-9 | **建置需求宣告完整性（v0.3，issue #13）**：CON-8 執行中若因缺少工具／依賴而失敗，該項目必須已列於 `build_requirements`（system_tools／runtime／notes）；未列即 fail。同構於 CON-3「程式碼引用的 env ⊆ 契約宣告」 | CON-8 失敗訊息 × build_requirements diff | 工具鏈需求現散在各 AGENTS.md 自由文字，機器讀不到：serverless-dns 需 curl（E34）、rin 需 bun 且會靜默漏裝（E36）、microfeed 需 yarn 且 init 自跑 vitest（E69）、hananalytics 無 lockfile 致 9 分鐘安裝（E46） |
 
 ## test_matrix
 
@@ -40,5 +42,7 @@
 | CON-5 | 缺 quota watchdog 的 maintenance fixture 必 fail | fixture truth-table | conformance CI |
 | CON-6 | UPSTREAM.md hash 與 profile.yaml 不一致 fixture 必 fail | invariant（雙處一致性） | conformance CI |
 | CON-7 | 同 SAP-3 | fixture truth-table | conformance CI |
+| CON-8 | fixture：專案宣告 gates 但乾淨環境下某指令非 0 → fail；未宣告 gates → skip | fixture truth-table | conformance CI（獨立 job，執行時間隨專案） |
+| CON-9 | fixture：CON-8 因缺 curl 失敗但 system_tools 未列 curl → fail；已列則僅記為環境前置不 fail | fixture truth-table | conformance CI |
 
 三份 schema 本身的回歸測試：`schemas/examples/` 內每份 schema 至少一個 valid＋一個 invalid 範例，CI 對跑（schema 改壞會立刻紅）。

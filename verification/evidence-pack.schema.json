@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "spec_version", "project_id", "submitted_at", "deploy_event", "code_metrics", "conformance", "low_carbon", "free_tier"],
   "properties": {
-    "schema_version": { "type": "string", "pattern": "^0\\.[123]\\.\\d+$" },
+    "schema_version": { "type": "string", "pattern": "^0\\.[1234]\\.\\d+$" },
     "maturity_reached": {
       "type": "string",
       "enum": ["D1", "D2", "D3", "D4", "D4-degraded", "D5a", "D5b"],
@@ -17,6 +17,24 @@
     "project_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "對應服務卡 id" },
     "submitted_at": { "type": "string", "format": "date-time" },
     "supersedes": { "type": "string", "description": "更正時指向被取代的 Pack 檔名（EP-2）；被指向的 Pack 保留不刪" },
+    "unverified_scope": {
+      "type": "array",
+      "description": "v0.4（issue #10）：本次驗證**未涵蓋**的面向。未驗不是驗收結果而是範圍界定——記 pass 是灌水、記 fail 是誣賴，故獨立於 user_acceptance。社群用途：服務卡顯示「驗證覆蓋範圍」，讀者可判斷徽章的實際含金量",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["surface", "reason"],
+        "properties": {
+          "surface": { "type": "string", "description": "未驗的面向（如「Google 登入流程」「登入後卡片牆」）" },
+          "reason": { "type": "string", "description": "為何不可驗" },
+          "blocker_kind": {
+            "type": "string",
+            "enum": ["external-dependency", "requires-human", "platform-limit", "cost", "other"],
+            "description": "external-dependency＝需外部服務帳號；requires-human＝需真人互動；platform-limit＝平台限制"
+          }
+        }
+      }
+    },
     "submitter": {
       "type": "object",
       "additionalProperties": false,
@@ -96,6 +114,24 @@
           "human_interventions": { "type": "integer", "minimum": 0 },
           "stuck_state": { "type": ["string", "null"], "description": "卡關的狀態機狀態；未卡填 null。弱 agent 卡關位置＝spec bug 訊號" },
           "retries": { "type": "integer", "minimum": 0, "maximum": 3, "description": "retry budget 上限 3（EP-7）" },
+          "self_repairs": {
+            "type": "array",
+            "description": "v0.4（issue #12）：agent 自主執行的環境修復。**修了必須記**——未記錄的修復會讓 Pack 顯示「一次過關」而掩蓋專案缺陷，使驗證紀錄無法反映乾淨環境的真實體驗。亦為 profile.build_requirements 的資料來源（issue #13）",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["action", "reason"],
+              "properties": {
+                "action": { "type": "string", "description": "實際執行的修復（如 npm i --save-dev @types/node）" },
+                "reason": { "type": "string", "description": "觸發修復的失敗現象" },
+                "kind": {
+                  "type": "string",
+                  "enum": ["missing-dev-dependency", "generate-types", "missing-tool", "transient-retry", "other"],
+                  "description": "修復類型；不得用於服務邏輯或契約變更（AGT-2 禁止項）"
+                }
+              }
+            }
+          },
           "date": { "type": "string", "format": "date" }
         }
       }

@@ -49,3 +49,15 @@ RECEIVED → INSPECTING → RISK_REVIEW_READY → AUTHORIZED → USER_COPY_CREAT
 | SM-5 | 每個狀態各發一次 uninstall，全部到 ABORTED＋teardown_report | fixture truth-table（全狀態枚舉） | mcp repo CI |
 
 本檔為行為規格（S0 凍結狀態集與 guard）；server 實作落 S3。S2 期間人照 checklist 跑同一狀態機（人也是合規執行器），每站在 Evidence Pack 留人工紀錄——這正是「Agent 難產標準照樣可用」的驗證。
+
+## Agent 自主修復邊界（AGT，v0.3；issue #12）
+
+「agent 是導遊不是裁判」定義了**判定權**歸機械閘；本節定義**行動權**——agent 遇到環境障礙時可以自己修到什麼程度。無此界線時，同一個缺陷下三種行為都不違規：直接判 fail（冤枉專案）、修復並記錄（正確）、**修復但不記錄（最危險——Evidence Pack 顯示「一次過關」，掩蓋專案缺陷，下一個使用者照樣踩）**。
+
+| ID | 條款（可判定句） | 判定方式 | 來源故障 |
+|---|---|---|---|
+| AGT-1 | Agent **得**執行不改變服務行為的環境修復：補裝缺漏的開發依賴、生成型別檔、建立缺少的空目錄、對平台傳播期暫態重試 | Evidence Pack `agent_matrix[].self_repairs` 的 `kind` ⊆ 允許集合 | business-card-mcp run 35：專案缺 @types/node 致 typecheck 失敗，agent 補裝後續行——若禁止修復，真缺陷會被記成部署失敗 |
+| AGT-2 | Agent **不得**：修改服務邏輯、放寬驗收條件、變更契約宣告的資源或 secrets、跳過失敗的閘門。需要上述動作才能繼續時，如實回報 partial／failed | 契約檔與服務原始碼的 git diff 必須為空（patch 集除外）；驗收項不得刪改 | 「閘門校準是雙向的，但放寬要從產出端證明」——agent 自我放寬會讓 fail-closed 失效 |
+| AGT-3 | 每一次 AGT-1 修復**必須**記入 `self_repairs`（action＋reason）並在最終報告列出 | Pack schema：有修復卻空陣列＝紀錄失真（人工審查判定；累積後由 CON-9 反推 build_requirements） | 未記錄的修復使驗證紀錄無法反映乾淨環境的真實體驗——徽章失真 |
+
+**與 CON-8／CON-9 的關係（三環閉環）**：CON-8 在 CI **偵測**（乾淨環境跑不動就攔下）→ AGT-3 在部署期**稽核**（修了什麼要記）→ CON-9 把記錄回饋成 `build_requirements` **預防**（下次 preflight 直接檢查）。缺第三環時，前兩環只會讓同一個坑被反覆記錄而不會消失。

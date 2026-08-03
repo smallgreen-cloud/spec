@@ -99,6 +99,26 @@
         }
       }
     },
+    "build_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "v0.3（issue #13）：建置與驗證的環境前置宣告。用途是把 agent 的現場修復（Evidence Pack self_repairs）回饋成事前宣告——部署者（人或 agent）動手前 preflight 檢查，同一個坑不必再踩。CON-9 驗證「建置實際需要的 ⊆ 此處宣告」（同構於 CON-3 的 env 對帳）",
+      "properties": {
+        "runtime": { "type": "string", "description": "如 node>=20、bun>=1.1" },
+        "package_manager": { "type": "string", "enum": ["npm", "pnpm", "yarn", "bun", "other"] },
+        "system_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "非作業系統預設安裝者才列（如 curl、terraform）。實證：serverless-dns 需 curl（上游 pre.sh 用 wget，macOS 無）"
+        },
+        "gates": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "AGENTS.md 引用為「閘門」的指令，依序執行皆須 exit 0（CON-8 乾淨環境建置閘據此判定）。如 [\"npx wrangler types\", \"npm run typecheck\", \"npm test\"]"
+        },
+        "notes": { "type": "string", "description": "順序或前置的補充（如「typecheck 前須先 wrangler types 生成型別」）" }
+      }
+    },
     "resource_usage": {
       "type": "array",
       "description": "v0.2（issue #3）：wrangler 宣告資源的必用／選配標注；未列者視為必用。SVC-4 免費等級判定據此區分",
