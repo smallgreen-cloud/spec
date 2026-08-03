@@ -9,8 +9,8 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "pattern": "^0\\.[12]\\.\\d+$",
-      "description": "本檔遵循的契約 schema 版本（0.1.x 契約於 0.2 下仍有效——v0.2 全為 additive 變更）"
+      "pattern": "^0\\.[123]\\.\\d+$",
+      "description": "本檔遵循的契約 schema 版本（舊版契約於新版下仍有效——v0.2/v0.3 皆為 additive 變更。0.3.x 才可使用 build_requirements）"
     },
     "profile": {
       "type": "string",
