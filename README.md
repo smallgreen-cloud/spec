@@ -1,12 +1,16 @@
 # SmallGreen Spec
 
-> 小型雲端服務的部署標準 | The deployment standard for small, green, self-owned cloud services.
+> Cloudflare 上 AI-agent 部署的**候選 conformance profile**｜A candidate conformance profile for AI-agent deployment of small, self-owned cloud services.
 
-**Status: v0.2.0 — 六件套齊備；Evidence Pack schema 已凍結（2026-07-30 簽核，v0.2 僅 additive 增欄）；S2 三專案×多 agent 實跑回饋（issues #1-#6）已收斂**
+**Status: v0.3.1 — 六件套齊備＋三環閉環（CON-8 建置閘／AGT 修復邊界／CON-9 宣告完整性）；Evidence Pack schema 0.4.0（凍結於 0.1.0，其後皆 additive）；37 runs 實跑回饋收斂至 issues #1-#13**
+
+**定位（2026-08-05 依三方審查下修）**：本規格**不宣稱是一套新標準**。它是把既有元件——[AGENTS.md](https://agents.md)（agent 指示慣例）、JSON Schema、平台自己的 `wrangler.jsonc` 資源宣告——組成的**候選 conformance profile**：在其上補一層「執行期驗收＋移除程序＋更新義務」的機械可檢查產物。跨平台互通、獨立實作相容、社群共識三者**皆未證明**，故不使用「標準」定位。與 TOSCA／CNAB／Helm 等既有規範的關係尚在核實中（spec#18）。
 
 ## 這是什麼
 
-SmallGreen Spec 定義「一個小型開源專案如何被安全地部署成使用者自己帳號裡的 serverless 服務（GitHub＋Cloudflare 免費額度）」的完整標準：部署前判定、部署驗收、長期維護、以及可稽核的驗證證據。
+定義「一個小型開源專案如何被安全地部署成使用者自己帳號裡的 serverless 服務（GitHub＋Cloudflare 免費額度）」：部署前判定、部署驗收、長期維護、以及可稽核的驗證證據。
+
+**目前有證據支持的效果，只有一項**（37 runs，2026-08-05 盤點）：契約使**第三方能在不讀原始碼、不執行 agent 的情況下重現移除程序並留下可稽核證據**。契約**沒有**提高初始部署成功率（11/12 vs 12/12），也**沒有**明顯縮短耗時（中位 14 分 vs 16 分）。更大的宣稱請勿引用本規格。
 
 核心原則：
 
