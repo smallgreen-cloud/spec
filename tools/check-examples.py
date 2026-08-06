@@ -25,6 +25,11 @@ CASES = [
     ("schemas/service-card.schema.json", "schemas/examples/service-card.invalid.yaml", False),
     ("verification/evidence-pack.schema.json", "verification/examples/evidence-pack.valid.json", True),
     ("verification/evidence-pack.schema.json", "verification/examples/evidence-pack.invalid.json", False),
+    ("verification/calibration-report.schema.json", "verification/examples/calibration-report.valid.json", True),
+    ("verification/calibration-report.schema.json", "verification/examples/calibration-report.invalid.json", False),
+    ("verification/live-canary-report.schema.json", "verification/examples/live-canary-report.valid.json", True),
+    ("verification/live-canary-report.schema.json", "verification/examples/live-canary-report.account.valid.json", True),
+    ("verification/live-canary-report.schema.json", "verification/examples/live-canary-report.invalid.json", False),
 ]
 
 
@@ -37,6 +42,23 @@ def load(path: Path):
 
 def main() -> int:
     failures = []
+
+    expected_profiles = {
+        "verification/examples/live-canary-report.valid.json": {
+            "auth_mode": "wrangler_oauth",
+            "observation_scope": "owned_resources",
+            "zero_diff_level": "owned_resource_zero_diff",
+        },
+        "verification/examples/live-canary-report.account.valid.json": {
+            "auth_mode": "api_token",
+            "observation_scope": "account",
+            "zero_diff_level": "account_snapshot_zero_diff",
+        },
+    }
+    for fixture_rel, expected in expected_profiles.items():
+        actual = load(ROOT / fixture_rel).get("verification")
+        if actual != expected:
+            failures.append(f"{fixture_rel}: verification profile 未覆蓋預期 scope")
 
     schemas = sorted({schema for schema, _, _ in CASES})
     for rel in schemas:

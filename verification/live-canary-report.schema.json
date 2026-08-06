@@ -14,6 +14,7 @@
     "canary",
     "verifier",
     "environment",
+    "verification",
     "checkpoints",
     "snapshots",
     "acceptance",
@@ -23,7 +24,7 @@
     "eligible_for_project_runs"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
+    "schema_version": { "const": "0.2.0" },
     "run_type": { "const": "calibration" },
     "layer": { "const": "L1" },
     "execution_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" },
@@ -56,7 +57,7 @@
       "required": ["name", "version", "source_revision", "sha256"],
       "properties": {
         "name": { "const": "smallgreen-l1-live-canary" },
-        "version": { "const": "0.1.0" },
+        "version": { "const": "0.2.0" },
         "source_revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
         "sha256": { "$ref": "#/$defs/sha256" }
       }
@@ -73,6 +74,34 @@
         "release": { "type": "string", "minLength": 1, "maxLength": 128 },
         "machine": { "type": "string", "minLength": 1, "maxLength": 32 }
       }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["auth_mode", "observation_scope", "zero_diff_level"],
+      "properties": {
+        "auth_mode": { "enum": ["wrangler_oauth", "api_token"] },
+        "observation_scope": { "enum": ["owned_resources", "account"] },
+        "zero_diff_level": {
+          "enum": ["owned_resource_zero_diff", "account_snapshot_zero_diff"]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "auth_mode": { "const": "wrangler_oauth" },
+            "observation_scope": { "const": "owned_resources" },
+            "zero_diff_level": { "const": "owned_resource_zero_diff" }
+          }
+        },
+        {
+          "properties": {
+            "auth_mode": { "const": "api_token" },
+            "observation_scope": { "const": "account" },
+            "zero_diff_level": { "const": "account_snapshot_zero_diff" }
+          }
+        }
+      ]
     },
     "checkpoints": {
       "type": "array",
@@ -192,12 +221,14 @@
         "L1_INPUT_INVALID",
         "L0_NOT_ELIGIBLE",
         "AUTH_MISSING",
+        "AUTH_UNAVAILABLE",
         "WRANGLER_UNSUPPORTED",
         "CANARY_SOURCE_UNPINNED",
         "SNAPSHOT_FAILED",
         "CANARY_NAME_COLLISION",
         "DEPLOY_FAILED",
         "DEPLOY_EFFECT_MISSING",
+        "DEPLOY_URL_MISSING",
         "SNAPSHOT_CONTAMINATED",
         "HEALTH_TIMEOUT",
         "FUNCTIONAL_FAILED",

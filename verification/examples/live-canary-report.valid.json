@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "run_type": "calibration",
   "layer": "L1",
   "execution_id": "synthetic-pass-01",
@@ -18,7 +18,7 @@
   },
   "verifier": {
     "name": "smallgreen-l1-live-canary",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "source_revision": "cccccccccccccccccccccccccccccccccccccccc",
     "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
   },
@@ -30,6 +30,11 @@
     "release": "6.8.0",
     "machine": "x86_64"
   },
+  "verification": {
+    "auth_mode": "wrangler_oauth",
+    "observation_scope": "owned_resources",
+    "zero_diff_level": "owned_resource_zero_diff"
+  },
   "checkpoints": [
     { "id": "PREFLIGHT", "result": "pass", "error_code": null, "duration_ms": 10, "attempts": 1 },
     { "id": "SNAPSHOT_BEFORE", "result": "pass", "error_code": null, "duration_ms": 20, "attempts": 1 },
@@ -39,9 +44,9 @@
     { "id": "SNAPSHOT_AFTER", "result": "pass", "error_code": null, "duration_ms": 20, "attempts": 1 }
   ],
   "snapshots": {
-    "before": { "worker_count": 2, "worker_set_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" },
-    "after_deploy": { "worker_count": 3, "worker_set_sha256": "1111111111111111111111111111111111111111111111111111111111111111" },
-    "after_teardown": { "worker_count": 2, "worker_set_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" }
+    "before": { "worker_count": 0, "worker_set_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" },
+    "after_deploy": { "worker_count": 1, "worker_set_sha256": "1111111111111111111111111111111111111111111111111111111111111111" },
+    "after_teardown": { "worker_count": 0, "worker_set_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" }
   },
   "acceptance": {
     "health": { "http_status": 200, "body_sha256": "2222222222222222222222222222222222222222222222222222222222222222", "pass": true, "attempts": 1 },
