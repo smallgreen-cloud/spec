@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1.0",
+  "run_type": "calibration",
+  "generated_at": "2026-08-05T08:00:00+00:00",
+  "suite": {
+    "id": "smallgreen-l0-known-answer",
+    "version": "0.1.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "source_dirty": false
+  },
+  "verifier": {
+    "name": "smallgreen-conformance-calibration",
+    "version": "0.1.0",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "source_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "environment": {
+    "python": "3.12.11",
+    "system": "Linux",
+    "release": "6.8.0",
+    "machine": "x86_64"
+  },
+  "cases": [
+    {
+      "fixture_id": "W0-PREFLIGHT-PASS",
+      "expected": { "verdict": "pass", "terminal_stage": "PREFLIGHT", "error_code": null },
+      "observed": { "verdict": "pass", "terminal_stage": "PREFLIGHT", "error_code": null },
+      "match": true
+    },
+    {
+      "fixture_id": "W1-KNOWN-PASS",
+      "expected": { "verdict": "pass", "terminal_stage": "COMPLETE", "error_code": null },
+      "observed": { "verdict": "pass", "terminal_stage": "COMPLETE", "error_code": null },
+      "match": true
+    },
+    {
+      "fixture_id": "W2-PREFLIGHT-FAIL",
+      "expected": { "verdict": "fail", "terminal_stage": "PREFLIGHT", "error_code": "MISSING_PREREQUISITE" },
+      "observed": { "verdict": "fail", "terminal_stage": "PREFLIGHT", "error_code": "MISSING_PREREQUISITE" },
+      "match": true
+    },
+    {
+      "fixture_id": "W3-ACCEPTANCE-FAIL",
+      "expected": { "verdict": "fail", "terminal_stage": "ACCEPTANCE", "error_code": "ACCEPTANCE_FAILED" },
+      "observed": { "verdict": "fail", "terminal_stage": "ACCEPTANCE", "error_code": "ACCEPTANCE_FAILED" },
+      "match": true
+    },
+    {
+      "fixture_id": "W4-TEARDOWN-FAIL",
+      "expected": { "verdict": "fail", "terminal_stage": "TEARDOWN", "error_code": "RESIDUAL_RESOURCES" },
+      "observed": { "verdict": "fail", "terminal_stage": "TEARDOWN", "error_code": "RESIDUAL_RESOURCES" },
+      "match": true
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "matched": 5,
+    "mismatched": 0
+  },
+  "verdict": "pass",
+  "eligible_for_l1": true
+}

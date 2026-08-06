@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallgreen.cloud/schemas/live-canary-report.schema.json",
+  "title": "SmallGreen L1 Live Canary Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_type",
+    "layer",
+    "execution_id",
+    "generated_at",
+    "l0",
+    "canary",
+    "verifier",
+    "environment",
+    "checkpoints",
+    "snapshots",
+    "acceptance",
+    "teardown",
+    "verdict",
+    "primary_error",
+    "eligible_for_project_runs"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "run_type": { "const": "calibration" },
+    "layer": { "const": "L1" },
+    "execution_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "l0": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report_sha256", "suite_sha256", "eligible_for_l1"],
+      "properties": {
+        "report_sha256": { "$ref": "#/$defs/sha256" },
+        "suite_sha256": { "$ref": "#/$defs/sha256" },
+        "eligible_for_l1": { "type": "boolean" }
+      }
+    },
+    "canary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "version", "source_revision", "source_sha256", "name_sha256"],
+      "properties": {
+        "profile": { "const": "worker-only" },
+        "version": { "const": "0.1.0" },
+        "source_revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "source_sha256": { "$ref": "#/$defs/sha256" },
+        "name_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "source_revision", "sha256"],
+      "properties": {
+        "name": { "const": "smallgreen-l1-live-canary" },
+        "version": { "const": "0.1.0" },
+        "source_revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node", "node_arch", "wrangler", "system", "release", "machine"],
+      "properties": {
+        "node": { "$ref": "#/$defs/version" },
+        "node_arch": { "enum": ["arm64", "x64"] },
+        "wrangler": { "$ref": "#/$defs/version" },
+        "system": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "release": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "machine": { "type": "string", "minLength": 1, "maxLength": 32 }
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/checkpoint" },
+      "allOf": [
+        { "contains": { "properties": { "id": { "const": "PREFLIGHT" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "id": { "const": "SNAPSHOT_BEFORE" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "id": { "const": "DEPLOY" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "id": { "const": "ACCEPTANCE" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "id": { "const": "TEARDOWN" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "id": { "const": "SNAPSHOT_AFTER" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 }
+      ]
+    },
+    "snapshots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before", "after_deploy", "after_teardown"],
+      "properties": {
+        "before": { "oneOf": [{ "$ref": "#/$defs/snapshot" }, { "type": "null" }] },
+        "after_deploy": { "oneOf": [{ "$ref": "#/$defs/snapshot" }, { "type": "null" }] },
+        "after_teardown": { "oneOf": [{ "$ref": "#/$defs/snapshot" }, { "type": "null" }] }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["health", "functional"],
+      "properties": {
+        "health": { "oneOf": [{ "$ref": "#/$defs/probe" }, { "type": "null" }] },
+        "functional": { "oneOf": [{ "$ref": "#/$defs/probe" }, { "type": "null" }] }
+      }
+    },
+    "teardown": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["command_exit_code", "owned_worker_present", "unexpected_added_count", "unexpected_removed_count", "pass"],
+          "properties": {
+            "command_exit_code": { "type": "integer", "minimum": 0, "maximum": 255 },
+            "owned_worker_present": { "type": "boolean" },
+            "unexpected_added_count": { "type": "integer", "minimum": 0 },
+            "unexpected_removed_count": { "type": "integer", "minimum": 0 },
+            "pass": { "type": "boolean" }
+          }
+        },
+        { "type": "null" }
+      ]
+    },
+    "verdict": { "enum": ["pass", "fail"] },
+    "primary_error": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/errorCode" }
+      ]
+    },
+    "eligible_for_project_runs": { "type": "boolean" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "eligible_for_project_runs": { "const": true } }, "required": ["eligible_for_project_runs"] },
+      "then": {
+        "properties": {
+          "verdict": { "const": "pass" },
+          "primary_error": { "type": "null" },
+          "l0": { "properties": { "eligible_for_l1": { "const": true } } },
+          "checkpoints": { "items": { "properties": { "result": { "const": "pass" } } } },
+          "snapshots": {
+            "properties": {
+              "before": { "type": "object" },
+              "after_deploy": { "type": "object" },
+              "after_teardown": { "type": "object" }
+            }
+          },
+          "acceptance": {
+            "required": ["health", "functional"],
+            "properties": {
+              "health": { "type": "object", "properties": { "pass": { "const": true } } },
+              "functional": { "type": "object", "properties": { "pass": { "const": true } } }
+            }
+          },
+          "teardown": {
+            "type": "object",
+            "properties": {
+              "owned_worker_present": { "const": false },
+              "unexpected_added_count": { "const": 0 },
+              "unexpected_removed_count": { "const": 0 },
+              "pass": { "const": true }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "checkpoints": { "contains": { "properties": { "result": { "const": "fail" } }, "required": ["result"] } }
+        },
+        "required": ["checkpoints"]
+      },
+      "then": {
+        "properties": {
+          "verdict": { "const": "fail" },
+          "eligible_for_project_runs": { "const": false }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "errorCode": {
+      "enum": [
+        "L1_INPUT_INVALID",
+        "L0_NOT_ELIGIBLE",
+        "AUTH_MISSING",
+        "WRANGLER_UNSUPPORTED",
+        "CANARY_SOURCE_UNPINNED",
+        "SNAPSHOT_FAILED",
+        "CANARY_NAME_COLLISION",
+        "DEPLOY_FAILED",
+        "DEPLOY_EFFECT_MISSING",
+        "SNAPSHOT_CONTAMINATED",
+        "HEALTH_TIMEOUT",
+        "FUNCTIONAL_FAILED",
+        "TEARDOWN_FAILED",
+        "RESIDUAL_RESOURCE",
+        "RECOVERY_REQUIRED"
+      ]
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "result", "error_code", "duration_ms", "attempts"],
+      "properties": {
+        "id": { "enum": ["PREFLIGHT", "SNAPSHOT_BEFORE", "DEPLOY", "ACCEPTANCE", "TEARDOWN", "SNAPSHOT_AFTER"] },
+        "result": { "enum": ["pass", "fail", "skipped"] },
+        "error_code": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/errorCode" }
+          ]
+        },
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0, "maximum": 3 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "result": { "const": "pass" } }, "required": ["result"] },
+          "then": { "properties": { "error_code": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "result": { "const": "fail" } }, "required": ["result"] },
+          "then": {
+            "properties": {
+              "error_code": { "$ref": "#/$defs/errorCode" },
+              "attempts": { "minimum": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "result": { "const": "pass" } }, "required": ["result"] },
+          "then": { "properties": { "attempts": { "minimum": 1 } } }
+        },
+        {
+          "if": { "properties": { "result": { "const": "skipped" } }, "required": ["result"] },
+          "then": {
+            "properties": {
+              "error_code": { "type": "null" },
+              "duration_ms": { "const": 0 },
+              "attempts": { "const": 0 }
+            }
+          }
+        }
+      ]
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["worker_count", "worker_set_sha256"],
+      "properties": {
+        "worker_count": { "type": "integer", "minimum": 0 },
+        "worker_set_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_status", "body_sha256", "pass", "attempts"],
+      "properties": {
+        "http_status": { "type": "integer", "minimum": 100, "maximum": 599 },
+        "body_sha256": { "$ref": "#/$defs/sha256" },
+        "pass": { "type": "boolean" },
+        "attempts": { "type": "integer", "minimum": 1, "maximum": 3 }
+      }
+    }
+  }
+}

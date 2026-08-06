@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallgreen.cloud/schemas/calibration-report.schema.json",
+  "title": "SmallGreen Calibration Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_type",
+    "generated_at",
+    "suite",
+    "verifier",
+    "environment",
+    "cases",
+    "summary",
+    "verdict",
+    "eligible_for_l1"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "run_type": { "const": "calibration" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "suite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "sha256", "source_revision", "source_dirty"],
+      "properties": {
+        "id": { "const": "smallgreen-l0-known-answer" },
+        "version": { "type": "string", "pattern": "^[0-9A-Za-z][0-9A-Za-z._+-]{0,63}$" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "source_revision": {
+          "oneOf": [
+            { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+            { "type": "null" }
+          ]
+        },
+        "source_dirty": { "type": "boolean" }
+      }
+    },
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "sha256", "source_revision"],
+      "properties": {
+        "name": { "const": "smallgreen-conformance-calibration" },
+        "version": { "type": "string", "pattern": "^[0-9A-Za-z][0-9A-Za-z._+-]{0,63}$" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "source_revision": {
+          "oneOf": [
+            { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["python", "system", "release", "machine"],
+      "properties": {
+        "python": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "system": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "release": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "machine": { "type": "string", "minLength": 1, "maxLength": 32 }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/case" },
+      "allOf": [
+        { "contains": { "properties": { "fixture_id": { "const": "W0-PREFLIGHT-PASS" } }, "required": ["fixture_id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "fixture_id": { "const": "W1-KNOWN-PASS" } }, "required": ["fixture_id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "fixture_id": { "const": "W2-PREFLIGHT-FAIL" } }, "required": ["fixture_id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "fixture_id": { "const": "W3-ACCEPTANCE-FAIL" } }, "required": ["fixture_id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "fixture_id": { "const": "W4-TEARDOWN-FAIL" } }, "required": ["fixture_id"] }, "minContains": 1, "maxContains": 1 }
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "matched", "mismatched"],
+      "properties": {
+        "total": { "const": 5 },
+        "matched": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "mismatched": { "type": "integer", "minimum": 0, "maximum": 5 }
+      }
+    },
+    "verdict": { "enum": ["pass", "fail"] },
+    "eligible_for_l1": { "type": "boolean" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "eligible_for_l1": { "const": true } }, "required": ["eligible_for_l1"] },
+      "then": {
+        "properties": {
+          "verdict": { "const": "pass" },
+          "suite": {
+            "properties": {
+              "source_revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+              "source_dirty": { "const": false }
+            }
+          },
+          "verifier": {
+            "properties": {
+              "source_revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "cases": {
+            "contains": { "properties": { "match": { "const": false } }, "required": ["match"] }
+          }
+        },
+        "required": ["cases"]
+      },
+      "then": {
+        "properties": {
+          "verdict": { "const": "fail" },
+          "eligible_for_l1": { "const": false }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "terminal_stage", "error_code"],
+      "properties": {
+        "verdict": { "enum": ["pass", "fail"] },
+        "terminal_stage": { "enum": ["PREFLIGHT", "DEPLOYMENT", "ACCEPTANCE", "TEARDOWN", "COMPLETE"] },
+        "error_code": {
+          "oneOf": [
+            { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "verdict": { "const": "pass" } }, "required": ["verdict"] },
+          "then": { "properties": { "error_code": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "verdict": { "const": "fail" } }, "required": ["verdict"] },
+          "then": { "properties": { "error_code": { "type": "string" } } }
+        }
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_id", "expected", "observed", "match"],
+      "properties": {
+        "fixture_id": {
+          "enum": [
+            "W0-PREFLIGHT-PASS",
+            "W1-KNOWN-PASS",
+            "W2-PREFLIGHT-FAIL",
+            "W3-ACCEPTANCE-FAIL",
+            "W4-TEARDOWN-FAIL"
+          ]
+        },
+        "expected": { "$ref": "#/$defs/result" },
+        "observed": { "$ref": "#/$defs/result" },
+        "match": { "type": "boolean" }
+      }
+    }
+  }
+}

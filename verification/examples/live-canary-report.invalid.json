@@ -1,0 +1,61 @@
+{
+  "schema_version": "0.1.0",
+  "run_type": "calibration",
+  "layer": "L1",
+  "execution_id": "synthetic-invalid-01",
+  "generated_at": "2026-08-05T10:00:00+00:00",
+  "l0": {
+    "report_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "suite_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "eligible_for_l1": true
+  },
+  "canary": {
+    "profile": "worker-only",
+    "version": "0.1.0",
+    "source_revision": "cccccccccccccccccccccccccccccccccccccccc",
+    "source_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "name_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+  },
+  "verifier": {
+    "name": "smallgreen-l1-live-canary",
+    "version": "0.1.0",
+    "source_revision": "cccccccccccccccccccccccccccccccccccccccc",
+    "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+  },
+  "environment": {
+    "node": "26.0.0",
+    "node_arch": "x64",
+    "wrangler": "4.90.0",
+    "system": "Linux",
+    "release": "6.8.0",
+    "machine": "x86_64"
+  },
+  "checkpoints": [
+    { "id": "PREFLIGHT", "result": "pass", "error_code": null, "duration_ms": 10, "attempts": 1 },
+    { "id": "SNAPSHOT_BEFORE", "result": "pass", "error_code": null, "duration_ms": 20, "attempts": 1 },
+    { "id": "DEPLOY", "result": "pass", "error_code": null, "duration_ms": 1000, "attempts": 1 },
+    { "id": "ACCEPTANCE", "result": "pass", "error_code": null, "duration_ms": 200, "attempts": 1 },
+    { "id": "TEARDOWN", "result": "fail", "error_code": "RESIDUAL_RESOURCE", "duration_ms": 500, "attempts": 1 },
+    { "id": "SNAPSHOT_AFTER", "result": "fail", "error_code": "RESIDUAL_RESOURCE", "duration_ms": 20, "attempts": 1 }
+  ],
+  "snapshots": {
+    "before": { "worker_count": 2, "worker_set_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" },
+    "after_deploy": { "worker_count": 3, "worker_set_sha256": "1111111111111111111111111111111111111111111111111111111111111111" },
+    "after_teardown": { "worker_count": 3, "worker_set_sha256": "1111111111111111111111111111111111111111111111111111111111111111" }
+  },
+  "acceptance": {
+    "health": { "http_status": 200, "body_sha256": "2222222222222222222222222222222222222222222222222222222222222222", "pass": true, "attempts": 1 },
+    "functional": { "http_status": 200, "body_sha256": "3333333333333333333333333333333333333333333333333333333333333333", "pass": true, "attempts": 1 }
+  },
+  "teardown": {
+    "command_exit_code": 0,
+    "owned_worker_present": true,
+    "unexpected_added_count": 1,
+    "unexpected_removed_count": 0,
+    "pass": false
+  },
+  "verdict": "pass",
+  "primary_error": null,
+  "eligible_for_project_runs": true,
+  "worker_name": "must-not-be-public"
+}

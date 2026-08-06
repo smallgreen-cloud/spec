@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1.0",
+  "run_type": "project",
+  "generated_at": "2026-08-05T08:00:00+00:00",
+  "suite": {
+    "id": "smallgreen-l0-known-answer",
+    "version": "0.1.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_revision": null,
+    "source_dirty": true
+  },
+  "verifier": {
+    "name": "smallgreen-conformance-calibration",
+    "version": "0.1.0",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "source_revision": null
+  },
+  "environment": {
+    "python": "3.12.11",
+    "system": "Linux",
+    "release": "6.8.0",
+    "machine": "x86_64"
+  },
+  "cases": [],
+  "summary": {
+    "total": 5,
+    "matched": 5,
+    "mismatched": 0
+  },
+  "verdict": "pass",
+  "eligible_for_l1": true,
+  "raw_log": "must never be accepted"
+}
