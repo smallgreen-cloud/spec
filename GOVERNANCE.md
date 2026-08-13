@@ -17,7 +17,7 @@
 | ID | 條款 | 判定方式 |
 |---|---|---|
 | GOV-4 | SmallGreen Evidence Dataset（Evidence Pack 彙總）以 CC-BY-4.0 公開＝社群公共財，任何人可查可研究 | dataset 發布物 LICENSE 檔 |
-| GOV-5 | 碳計算 pipeline 與論文資料處理留計畫自有 repo——它們是資料的消費者，不是標準的一部分；spec 與 dataset 不依賴它們 | spec repo 零碳計算程式碼（目錄掃描） |
+| GOV-5 | 碳計算 pipeline 與任何下游資料分析留各自的自有 repo——它們是資料的消費者，不是標準的一部分；spec 與 dataset 不依賴它們 | spec repo 零碳計算程式碼（目錄掃描） |
 | GOV-6 | 測量欄位凍結：Evidence Pack schema 欄位刪除或語意變更＝major 版；新增欄位＝minor 版且必過欄位正當性判準（EP-4）。**數據不可回填**——舊 Pack 永不依新 schema 重寫 | semver 政策＋EP-2 append-only |
 
 ## 欄位正當性判準（收欄位的門檻）

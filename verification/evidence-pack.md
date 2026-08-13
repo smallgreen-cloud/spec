@@ -5,7 +5,7 @@
 > 自此：新增欄位＝minor 版且必過欄位正當性判準（EP-4）；欄位刪除或語意變更＝major 版；舊 Pack 永不依新 schema 重寫（GOV-6）。
 
 > 六件套 #4b。Evidence Pack＝一次真實驗證部署的 conformance 產物，是整個計畫的資料心臟：
-> **驗證統計＝碳宣稱出處＝論文資料集，一條管線三次收穫。**
+> **驗證統計＝碳宣稱出處＝公開資料集，一條管線三次收穫。**
 > 測量欄位隨標準凍結——數據不可回填，本 schema 是 S0 唯一不可逆的環節。Schema：[evidence-pack.schema.json](evidence-pack.schema.json)。
 
 ## 欄位正當性判準（進 schema 的門檻）
@@ -33,7 +33,7 @@
 | ID | 條款（可判定句） | 判定方式 | 來源故障 |
 |---|---|---|---|
 | EP-1 | 每筆 Pack 通過 evidence-pack.schema.json 驗證 | registry CI | 欄位漂移＝資料集不可分析 |
-| EP-2 | Pack 為 append-only：merge 後不可修改；更正＝提交新 Pack 並以 `supersedes` 指向舊筆 | registry CI 對已存在檔案的 diff 檢查（改動既有 Pack 的 PR 必 fail） | 數據可回填＝研究誠信破產（實驗數據 provenance 鐵則） |
+| EP-2 | Pack 為 append-only：merge 後不可修改；更正＝提交新 Pack 並以 `supersedes` 指向舊筆 | registry CI 對已存在檔案的 diff 檢查（改動既有 Pack 的 PR 必 fail） | 數據可回填＝證據可信度破產（資料 provenance 鐵則） |
 | EP-3 | schema 不含任何使用者識別欄位（IP、裝置、安裝 ID、email）；submitter 僅自願 GitHub handle | schema `additionalProperties: false` 機械保證＋欄位審查 | Audacity 2021 遙測風暴；**統計對象是專案，永遠不是使用者** |
 | EP-4 | 新增欄位需在本檔正當性表格補列「社群自身用途」，缺者 PR 不可 merge | spec PR review checklist | 欄位膨脹→變相遙測 |
 | EP-5 | 彙總資料集（SmallGreen Evidence Dataset）以 CC 授權公開 | dataset repo LICENSE 檔存在性 | 公共財承諾（見 GOVERNANCE.md） |
