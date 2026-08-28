@@ -2,8 +2,8 @@
 # Profile 判定腳本（SAP-2）讀本檔判定，不寫死在程式碼。
 # 額度變動＝改本檔＋spec minor 版號；每筆額度需附 Evidence Pack 實測或官方文件日期。
 # 版本：與 spec 同步（見 repo tag）
-spec_version: "0.2.1"
-verified_at: "2026-08-02"
+spec_version: "0.4.0"
+verified_at: "2026-08-28"
 
 allowed:
   workers:
@@ -22,6 +22,10 @@ allowed:
   r2:
     wrangler_keys: ["r2_buckets"]
     free_quota: "10 GB storage, Class A 1M/month"
+  images:
+    wrangler_keys: ["images"]
+    free_quota: "5,000 unique transformations/month；來源儲存在 R2 等 Images 外部儲存時適用"
+    notes: "依 2026-07-08 Cloudflare Images pricing／binding 文件納入：Images Free 可處理外部來源圖片，`.info()` 不計費；Images Paid 用於超過免費轉換額度或 Images hosted storage。若帳號仍使用 legacy Image Resizing billing，需先更新方案（錯誤 9432）。"
   cron_triggers:
     wrangler_keys: ["triggers.crons"]
     free_quota: "available on free plan"
@@ -31,9 +35,13 @@ allowed:
     free_quota: "10,000 Neurons/day（全模型共用 pool，00:00 UTC 重置）"
     notes: "使用本項者免費等級至多 C，額度緊者標 D（見 service-card SVC-4）"
   email_routing:
-    wrangler_keys: ["send_email"]
+    wrangler_keys: []
     free_quota: "free"
-    notes: "郵件類專案屬審慎區，Community Verified 需人工加驗濫用面"
+    notes: "Email Routing（收件／轉寄）與 Email Sending 是不同能力；不要用本項替 Email Sending 宣稱免費。"
+  email_sending_verified_destination:
+    wrangler_keys: ["send_email"]
+    free_quota: "寄送至帳號內 verified destination 可免費；任意收件者需 Workers Paid"
+    notes: "依 Cloudflare Email Service pricing：Email Sending 一般需要 Workers Paid；單人 OTP 可把自己的 Gmail 設為 verified destination，部署前仍需在帳號內實測寄送能力。"
   analytics_engine:
     wrangler_keys: ["analytics_engine_datasets"]
     free_quota: "100,000 data points written/day, 10,000 read queries/day（Workers Free）"

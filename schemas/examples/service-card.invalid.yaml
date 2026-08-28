@@ -2,6 +2,25 @@
 id: fake-verified
 name: Fake Verified
 one_liner: 測試反例
+product_summary:
+  project_type:
+    zh-tw: 測試服務
+    en: A test service
+  problem:
+    zh-tw: 測試用途
+    en: Test purpose
+  audience:
+    zh-tw: [測試者]
+    en: [Testers]
+  capabilities:
+    zh-tw: [測試能力]
+    en: [Test capability]
+  deployment_requirements:
+    zh-tw: [測試環境]
+    en: [A test environment]
+  limitations:
+    zh-tw: [不可用於正式服務]
+    en: [Not for production use]
 categories: [monitoring-analytics]
 profile: small-app
 repo:

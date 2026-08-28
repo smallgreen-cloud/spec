@@ -2,6 +2,25 @@
 id: sink
 name: Sink
 one_liner: 自己帳號裡的短網址服務，附點擊統計
+product_summary:
+  project_type:
+    zh-tw: 自架短網址服務
+    en: A self-hosted URL shortener
+  problem:
+    zh-tw: 解決短網址與基本點擊統計分散在第三方平台的問題
+    en: Solves the problem of short links and basic click counts being tied to third-party platforms
+  audience:
+    zh-tw: [個人與小型團隊]
+    en: [Individuals and small teams]
+  capabilities:
+    zh-tw: [建立短網址、查看點擊統計]
+    en: [Create short links, view click counts]
+  deployment_requirements:
+    zh-tw: [需要自己的 Cloudflare Workers 與 KV]
+    en: [Your own Cloudflare Workers and KV are required]
+  limitations:
+    zh-tw: [範例未涵蓋完整驗證證據]
+    en: [This example does not include a complete verification evidence set]
 categories: [website-shortlink-content]
 profile: small-app
 repo:

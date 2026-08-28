@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1.0",
+  "project_id": "sink",
+  "contract_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "contract_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "spec_version": "0.3.1",
+  "agent": {
+    "family": "opencode",
+    "version": "1.2.3",
+    "model": "big-pickle"
+  },
+  "outcome": "failed",
+  "preflight_result": "pass",
+  "failed_step_id": "DEPLOY",
+  "error_codes": ["PLATACCT"],
+  "retry_count": 2,
+  "human_debug_interventions": 0,
+  "duration_seconds": 600,
+  "verifier_result": "fail",
+  "stdout": "raw logs are forbidden"
+}

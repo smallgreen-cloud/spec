@@ -2,7 +2,7 @@
 
 > Cloudflare 上 AI-agent 部署的**候選 conformance profile**｜A candidate conformance profile for AI-agent deployment of small, self-owned cloud services.
 
-**Status: v0.3.1 — 六件套齊備＋三環閉環（CON-8 建置閘／AGT 修復邊界／CON-9 宣告完整性）；Evidence Pack schema 0.4.0（凍結於 0.1.0，其後皆 additive）；37 runs 實跑回饋收斂至 issues #1-#13**
+**Status: v0.4.0 — 服務卡雙語產品摘要與 Public Feedback draft 加入；六件套齊備＋三環閉環（CON-8 建置閘／AGT 修復邊界／CON-9 宣告完整性）；Evidence Pack schema 0.4.0（凍結於 0.1.0，其後皆 additive）；37 runs 實跑回饋收斂至 issues #1-#13**
 
 **定位（2026-08-05 依三方審查下修）**：本規格**不宣稱是一套新標準**。它是把既有元件——[AGENTS.md](https://agents.md)（agent 指示慣例）、JSON Schema、平台自己的 `wrangler.jsonc` 資源宣告——組成的**候選 conformance profile**：在其上補一層「執行期驗收＋移除程序＋更新義務」的機械可檢查產物。跨平台互通、獨立實作相容、社群共識三者**皆未證明**，故不使用「標準」定位。與 TOSCA／CNAB／Helm 等既有規範的關係尚在核實中（spec#18）。
 
@@ -29,7 +29,9 @@
 | 4 | 三級驗證＋Evidence Pack | [verification/levels.md](verification/levels.md)＋[evidence-pack.md](verification/evidence-pack.md)＋[evidence-pack.schema.json](verification/evidence-pack.schema.json) | VER／EP |
 | 5 | 裁判層 MCP 介面規格（12 工具） | [judge/mcp-interface.md](judge/mcp-interface.md) | JDG |
 | 6 | 部署狀態機 | [state-machine/deployment-state-machine.md](state-machine/deployment-state-machine.md) | SM |
+| — | 校正層（L0 known-answer／L1 live canary） | [verification/calibration-suite.md](verification/calibration-suite.md)＋[L0 report schema](verification/calibration-report.schema.json)＋[L1 report schema](verification/live-canary-report.schema.json) | CAL |
 | — | 資料治理與版本政策 | [GOVERNANCE.md](GOVERNANCE.md) | GOV |
+| — | 自願公開的部署改善訊號（draft） | [Public Feedback Pack](feedback/public-feedback-pack.md)＋[schema](feedback/public-feedback-pack.schema.json) | PFB |
 
 三級驗證：**Discovered → Community Verified → SmallGreen Ready**
 
@@ -38,6 +40,7 @@
 ## 可執行載體（S1 已上線）
 
 - [`conformance`](https://github.com/smallgreen-cloud/conformance)——檢查腳本＋reusable GitHub Actions workflow：契約 schema、免費層允許清單、secrets 掃描、secrets manifest 一致性、migration 空庫重放、本地 smoke。各檔 test_matrix 的「conformance CI」落點由它實現
+- [`conformance`](https://github.com/smallgreen-cloud/conformance) 的 Public Feedback 參考工具——從已提交的契約產生去識別化 Pack、編輯後重驗 Secret，並只建立 GitHub Issue 草稿；不直接發布、不持有 GitHub 寫入權限
 - [`small-service-template`](https://github.com/smallgreen-cloud/small-service-template)——起手式範本，用它建的專案天生合規（其 CI 即 conformance 的活體驗證）
 
 ## 相關 repo

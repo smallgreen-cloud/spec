@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/smallgreen-cloud/spec/feedback/public-feedback-pack.schema.json",
+  "title": "SmallGreen Public Feedback Pack",
+  "description": "A de-identified, user-approved deployment outcome submitted as a public GitHub issue. It is feedback, not verification evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "contract_commit",
+    "contract_sha256",
+    "spec_version",
+    "agent",
+    "outcome",
+    "preflight_result",
+    "failed_step_id",
+    "error_codes",
+    "retry_count",
+    "human_debug_interventions",
+    "duration_seconds",
+    "verifier_result"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"
+    },
+    "contract_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "contract_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "spec_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*)){1,2}([-+][0-9A-Za-z.-]+)?$"
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family", "version", "model"],
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+() /:-]*$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+() /:-]*$"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+() /:-]*$"
+        }
+      }
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["verified", "failed", "blocked", "aborted"]
+    },
+    "preflight_result": {
+      "type": "string",
+      "enum": ["pass", "fail", "skipped"]
+    },
+    "failed_step_id": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{0,39}$" }
+      ]
+    },
+    "error_codes": {
+      "type": "array",
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_-]{0,39}$"
+      }
+    },
+    "retry_count": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "human_debug_interventions": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "duration_seconds": { "type": "integer", "minimum": 0, "maximum": 604800 },
+    "verifier_result": {
+      "type": "string",
+      "enum": ["pass", "fail", "not_run"]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "outcome": { "const": "verified" } }, "required": ["outcome"] },
+      "then": {
+        "properties": {
+          "failed_step_id": { "type": "null" },
+          "verifier_result": { "const": "pass" }
+        }
+      }
+    }
+  ]
+}

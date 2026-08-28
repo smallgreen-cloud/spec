@@ -30,6 +30,8 @@ CASES = [
     ("verification/live-canary-report.schema.json", "verification/examples/live-canary-report.valid.json", True),
     ("verification/live-canary-report.schema.json", "verification/examples/live-canary-report.account.valid.json", True),
     ("verification/live-canary-report.schema.json", "verification/examples/live-canary-report.invalid.json", False),
+    ("feedback/public-feedback-pack.schema.json", "feedback/examples/public-feedback-pack.valid.json", True),
+    ("feedback/public-feedback-pack.schema.json", "feedback/examples/public-feedback-pack.invalid.json", False),
 ]
 
 

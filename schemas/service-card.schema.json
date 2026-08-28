@@ -5,11 +5,25 @@
   "description": "registry 服務卡。registry YAML＝真相源，目錄站只 render。",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "name", "one_liner", "categories", "profile", "repo", "verification", "free_tier_grade", "low_carbon", "maintenance_status"],
+  "required": ["id", "name", "one_liner", "product_summary", "categories", "profile", "repo", "verification", "free_tier_grade", "low_carbon", "maintenance_status"],
   "properties": {
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
     "name": { "type": "string", "maxLength": 80 },
     "one_liner": { "type": "string", "maxLength": 120, "description": "一句話 use case，寫給一般人，非技術描述" },
+    "product_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_type", "problem", "audience", "capabilities", "deployment_requirements", "limitations"],
+      "description": "服務卡給人的產品摘要；不取代契約、Evidence 或架構資料",
+      "properties": {
+        "project_type": { "$ref": "#/$defs/bilingual_string" },
+        "problem": { "$ref": "#/$defs/bilingual_string" },
+        "audience": { "$ref": "#/$defs/bilingual_list" },
+        "capabilities": { "$ref": "#/$defs/bilingual_list" },
+        "deployment_requirements": { "$ref": "#/$defs/bilingual_list" },
+        "limitations": { "$ref": "#/$defs/bilingual_list" }
+      }
+    },
     "categories": {
       "type": "array",
       "minItems": 1,
@@ -144,6 +158,26 @@
             "generated_from": { "type": "string", "description": "生成來源 profile.yaml 的 commit hash" }
           }
         }
+      }
+    }
+  },
+  "$defs": {
+    "bilingual_string": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zh-tw", "en"],
+      "properties": {
+        "zh-tw": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "en": { "type": "string", "minLength": 1, "maxLength": 240 }
+      }
+    },
+    "bilingual_list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zh-tw", "en"],
+      "properties": {
+        "zh-tw": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "maxLength": 160 } },
+        "en": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "maxLength": 160 } }
       }
     }
   },
