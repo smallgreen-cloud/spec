@@ -1,0 +1,53 @@
+schema_version: "0.1.0"
+protocol: smallgreen-install/v1
+status: candidate
+target:
+  client: chatgpt-work
+  hosting: sites
+  execution_mode: native-sites
+trigger:
+  zh-tw: 依這網站，幫我部署到我的帳號
+  en: Deploy this service to my account from this page
+source:
+  repository: example/audio-notes
+  commit: 0123456789abcdef0123456789abcdef01234567
+  license: MIT
+hosting:
+  manifest: .openai/hosting.json
+  managed_resources: [site, d1, r2]
+  external_infrastructure: []
+interaction:
+  max_confirmations: 1
+  confirmations:
+    - id: create_private_site
+      reason: 建立或重用使用者帳號內的私人 Sites 資源
+  generated_secrets:
+    - name: CREDENTIAL_ENCRYPTION_KEY
+      storage: sites-secret
+      expose_to_chat: false
+  user_inputs:
+    - name: GROQ_API_KEY
+      timing: after-deploy
+      entry_channel: application-ui
+      chat_handling: forbidden
+      setup_path: /#groq-settings
+steps:
+  - id: preflight
+    action: verify_capability
+    description: 確認目前 Work 帳號可使用 Sites
+    requires_confirmation: false
+  - id: deploy_site
+    action: deploy
+    description: 以 Sites 原生工具部署鎖定來源
+    requires_confirmation: true
+acceptance:
+  - id: private_site_ready
+    stage: deployment
+    method: http
+    expected: 私人網站在登入後回應 200
+    required: true
+teardown:
+  document: .smallgreen/maintenance.yaml
+  requires_data_export: true
+blockers:
+  - 尚未完成全新帳戶附件傳輸驗收

@@ -21,6 +21,8 @@ CASES = [
     ("schemas/acceptance.schema.json", "schemas/examples/acceptance.invalid.yaml", False),
     ("schemas/maintenance.schema.json", "schemas/examples/maintenance.valid.yaml", True),
     ("schemas/maintenance.schema.json", "schemas/examples/maintenance.invalid.yaml", False),
+    ("schemas/install.schema.json", "schemas/examples/install.valid.yaml", True),
+    ("schemas/install.schema.json", "schemas/examples/install.invalid.yaml", False),
     ("schemas/service-card.schema.json", "schemas/examples/service-card.valid.yaml", True),
     ("schemas/service-card.schema.json", "schemas/examples/service-card.invalid.yaml", False),
     ("verification/evidence-pack.schema.json", "verification/examples/evidence-pack.valid.json", True),

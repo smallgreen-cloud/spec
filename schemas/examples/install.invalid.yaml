@@ -1,0 +1,43 @@
+schema_version: "0.1.0"
+protocol: smallgreen-install/v1
+status: ready
+target:
+  client: chatgpt-work
+  hosting: sites
+  execution_mode: native-sites
+trigger:
+  zh-tw: 部署
+  en: Deploy
+source:
+  repository: example/audio-notes
+  commit: not-a-commit
+  license: MIT
+hosting:
+  manifest: wrangler.jsonc
+  managed_resources: [site, d1, r2]
+  external_infrastructure: [external-cloudflare-account]
+interaction:
+  max_confirmations: 0
+  confirmations:
+    - id: extra_confirmation
+      reason: 不應存在
+  generated_secrets:
+    - name: CREDENTIAL_ENCRYPTION_KEY
+      storage: chat
+      expose_to_chat: true
+  user_inputs:
+    - name: GROQ_API_KEY
+      timing: before-deploy
+      entry_channel: chat
+      chat_handling: allowed
+steps:
+  - id: deploy
+    action: run_arbitrary_shell
+    description: 不受限制地執行命令
+    requires_confirmation: false
+acceptance: []
+teardown:
+  document: ""
+  requires_data_export: true
+blockers:
+  - ready 狀態不能仍有阻擋項

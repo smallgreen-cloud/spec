@@ -24,7 +24,7 @@
 | # | 元件 | 文件 | ID 前綴 |
 |---|---|---|---|
 | 1 | Profile 判定規則 | [profiles/small-app-profile.md](profiles/small-app-profile.md)／[profiles/pipeline-profile.md](profiles/pipeline-profile.md)＋[free-tier-allowlist.yaml](profiles/free-tier-allowlist.yaml) | SAP／PIP |
-| 2 | 契約檔 schema（`.smallgreen/` 三件） | [schemas/contract.md](schemas/contract.md)＋[profile](schemas/profile.schema.json)／[acceptance](schemas/acceptance.schema.json)／[maintenance](schemas/maintenance.schema.json) | CON |
+| 2 | 契約檔 schema（`.smallgreen/` 三件＋Sites 安裝擴充） | [schemas/contract.md](schemas/contract.md)＋[profile](schemas/profile.schema.json)／[acceptance](schemas/acceptance.schema.json)／[maintenance](schemas/maintenance.schema.json)；需要一句話安裝時另加 [Agent Install Contract](schemas/install.md)／[schema](schemas/install.schema.json) | CON／INS |
 | 3 | 服務卡 schema（含低碳欄位組） | [schemas/service-card.md](schemas/service-card.md)＋[service-card.schema.json](schemas/service-card.schema.json) | SVC |
 | 4 | 三級驗證＋Evidence Pack | [verification/levels.md](verification/levels.md)＋[evidence-pack.md](verification/evidence-pack.md)＋[evidence-pack.schema.json](verification/evidence-pack.schema.json) | VER／EP |
 | 5 | 裁判層 MCP 介面規格（12 工具） | [judge/mcp-interface.md](judge/mcp-interface.md) | JDG |

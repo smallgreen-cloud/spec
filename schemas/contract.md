@@ -1,6 +1,6 @@
-# 契約檔規格 v0.1（.smallgreen/ 三件）
+# 契約檔規格 v0.1（.smallgreen/ 核心三件＋可選安裝擴充）
 
-> 六件套 #2。契約檔位於 repo（或適配 repo）的 `.smallgreen/` 目錄，共三份 YAML，各配一份 JSON Schema。
+> 六件套 #2。核心契約位於 repo（或適配 repo）的 `.smallgreen/` 目錄，共三份 YAML，各配一份 JSON Schema。要宣稱可由 ChatGPT Work 一句話部署到 Sites 的專案，另須提供 `.smallgreen/install.yaml` 並通過 [Agent Install Contract](install.md)。
 > 目錄名沿革：原計畫為 `.smallapp/`，隨品牌定名改為 `.smallgreen/`（2026-07-30 定案，v0.1 起唯一有效名）。
 
 ## 設計原則
@@ -16,6 +16,8 @@
 | `.smallgreen/profile.yaml` | 這是什麼、屬哪個 profile、資料流向哪、要哪些 key | [profile.schema.json](profile.schema.json) |
 | `.smallgreen/acceptance.yaml` | 怎樣算部署成功（機械 smoke＋使用者驗收＋移除驗證） | [acceptance.schema.json](acceptance.schema.json) |
 | `.smallgreen/maintenance.yaml` | 怎麼更新、備份、回復、監控額度、完整移除 | [maintenance.schema.json](maintenance.schema.json) |
+
+`.smallgreen/install.yaml` 不是所有專案的必填核心契約，也不重複資源宣告。它是 Sites-only 的部署交接擴充：鎖定來源、限制 Agent action、規定確認與 secret 邊界，並把部署、runtime 設定及 operational 驗收分開。研究候選可用 `status: candidate` 公開缺口；只有 blockers 為空的 `status: ready` 才能對外宣稱一句話安裝。
 
 ## 條款（Requirements）
 

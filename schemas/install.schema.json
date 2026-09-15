@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallgreen.cooperation.tw/schema/install-0.1.0.json",
+  "title": "SmallGreen Agent Install Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "protocol",
+    "status",
+    "target",
+    "trigger",
+    "source",
+    "hosting",
+    "interaction",
+    "steps",
+    "acceptance",
+    "teardown",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "protocol": {"const": "smallgreen-install/v1"},
+    "status": {
+      "type": "string",
+      "enum": ["candidate", "ready"],
+      "description": "candidate contracts are inspectable but must not be presented as verified one-sentence installs"
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["client", "hosting", "execution_mode"],
+      "properties": {
+        "client": {"const": "chatgpt-work"},
+        "hosting": {"const": "sites"},
+        "execution_mode": {"const": "native-sites"}
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zh-tw", "en"],
+      "properties": {
+        "zh-tw": {"type": "string", "minLength": 1, "maxLength": 120},
+        "en": {"type": "string", "minLength": 1, "maxLength": 160}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "license"],
+      "properties": {
+        "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "license": {"type": "string", "minLength": 1},
+        "release": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "hosting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest", "managed_resources", "external_infrastructure"],
+      "properties": {
+        "manifest": {"type": "string", "pattern": "^\\.openai/hosting\\.json$"},
+        "managed_resources": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "enum": ["site", "d1", "r2"]}
+        },
+        "external_infrastructure": {
+          "type": "array",
+          "maxItems": 0,
+          "description": "Sites-only install contracts cannot require an external hosting account, runner or scheduler"
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_confirmations", "confirmations", "generated_secrets", "user_inputs"],
+      "properties": {
+        "max_confirmations": {"type": "integer", "minimum": 0, "maximum": 2},
+        "confirmations": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "reason"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]+$"},
+              "reason": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "generated_secrets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "storage", "expose_to_chat"],
+            "properties": {
+              "name": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+              "storage": {"const": "sites-secret"},
+              "expose_to_chat": {"const": false}
+            }
+          }
+        },
+        "user_inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "timing", "entry_channel", "chat_handling"],
+            "properties": {
+              "name": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+              "timing": {"const": "after-deploy"},
+              "entry_channel": {"const": "application-ui"},
+              "chat_handling": {"const": "forbidden"},
+              "setup_path": {"type": "string", "pattern": "^/"}
+            }
+          }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "action", "description", "requires_confirmation"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]+$"},
+          "action": {
+            "type": "string",
+            "enum": [
+              "verify_capability",
+              "verify_source",
+              "create_or_reuse_site",
+              "install_dependencies",
+              "apply_migrations",
+              "generate_secret",
+              "deploy",
+              "wait_for_terminal_state",
+              "verify_deployment",
+              "handoff_runtime_setup",
+              "verify_operational_flow"
+            ]
+          },
+          "description": {"type": "string", "minLength": 1},
+          "requires_confirmation": {"type": "boolean"},
+          "document": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "stage", "method", "expected", "required"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]+$"},
+          "stage": {"type": "string", "enum": ["deployment", "runtime-setup", "operational"]},
+          "method": {"type": "string", "enum": ["http", "sites-resource", "ui", "workflow"]},
+          "expected": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"}
+        }
+      }
+    },
+    "teardown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document", "requires_data_export"],
+      "properties": {
+        "document": {"type": "string", "minLength": 1},
+        "requires_data_export": {"type": "boolean"}
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "ready"}}, "required": ["status"]},
+      "then": {"properties": {"blockers": {"maxItems": 0}}}
+    }
+  ]
+}
