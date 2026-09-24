@@ -7,8 +7,8 @@
 | ID | 條款（可判定句） | 判定方式 |
 |---|---|---|
 | GOV-1 | small-service-template 與所有 SmallGreen Ready 專案不得包含 phone-home／遙測程式碼；判定＝行為分析器宣告外連清單中不得出現任何統計／分析／回報用途 domain（含站方自身 domain） | 行為分析器（SAP-5）＋external_services 用途欄審查 |
-| GOV-2 | 所有統計僅來自三種來源：(a) 公開 repo、(b) CI 紀錄、(c) 自願提交的 Evidence Pack。此外的資料收集管道一律不存在 | Evidence Pack schema 為唯一統計入口（EP-3 機械保證） |
-| GOV-3 | **統計對象是專案，永遠不是使用者**：任何 schema、任何工具、任何報表不得含使用者識別欄位 | schema `additionalProperties: false` 全面掃描 |
+| GOV-2 | 所有統計僅來自三種來源：(a) 公開 repo、(b) CI 紀錄、(c) 使用者自願公開的結構化 Pack。結構化 Pack 分為可信宣稱用 Evidence Pack，以及只供改善、不可升級宣稱的 Public Feedback Pack；此外的資料收集管道一律不存在 | 兩種 Pack 均以 `additionalProperties: false` schema 限制；Public Feedback Pack 另經提交前 Secret gate |
+| GOV-3 | **統計對象是專案，永遠不是使用者**：任何 schema、任何工具、任何報表不得含使用者識別欄位。Public Feedback Pack 內容不含 handle，但公開 Issue 仍會顯示提交者的 GitHub 帳號與時間，提交前必須明示 | schema `additionalProperties: false` 全面掃描＋PFB-6 公開身分揭露 |
 
 前例：Debian popcon（自願制跑二十年）。反例：Audacity 2021 遙測風暴、Go 遙測改 opt-in。走前例的路。
 
@@ -35,7 +35,7 @@
 | REQ | 驗證方式 | 測試類型 | 落點 |
 |---|---|---|---|
 | GOV-1 | template repo 行為分析零外連斷言（conformance 自掃，dogfooding） | invariant | template CI |
-| GOV-2 | 站方基礎設施審計：目錄站無任何 analytics 收集端點 | integration | 目錄站 CI（S4） |
+| GOV-2 | 站方基礎設施審計：目錄站無任何部署回報端點；Public Feedback 只能由使用者在公開 GitHub UI 提交 | integration | 目錄站 CI（S4） |
 | GOV-3 | 全 schema 掃描：識別類欄位名清單（email／ip／device／install_id）零命中 | invariant | spec CI |
 | GOV-4 | dataset LICENSE 存在性 | integration | dataset 發布 CI |
 | GOV-5 | spec repo 目錄掃描零碳計算程式碼 | invariant | spec CI |
