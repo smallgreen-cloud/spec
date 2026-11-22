@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallgreen.cooperation.tw/schema/sites-hosting-0.1.0.json",
+  "title": "Sites-only source manifest subset",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Source declaration only. project_id is optional in a public template; native Sites supplies it on creation. Does not prove a live deployment or plan entitlement.",
+  "$defs": {
+    "binding": {"type": ["string", "null"], "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "identifier": {"type": "string", "minLength": 1}
+  },
+  "properties": {
+    "project_id": {"$ref": "#/$defs/identifier"},
+    "d1": {"$ref": "#/$defs/binding"},
+    "r2": {"$ref": "#/$defs/binding"},
+    "static": {
+      "type": "object", "additionalProperties": false, "required": ["directory"],
+      "properties": {"directory": {"enum": ["dist", "dist/client", "out", "build", ".output/public"]}}
+    },
+    "capabilities": {"type": "array", "uniqueItems": true, "items": {"enum": ["mcp"]}},
+    "plugins": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "connector_ids"],
+        "properties": {
+          "id": {"$ref": "#/$defs/identifier"},
+          "connector_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}}
+        }
+      }
+    },
+    "connectors": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["id"],
+        "properties": {
+          "id": {"$ref": "#/$defs/identifier"},
+          "action_selection_mode": {"enum": ["read_only", "all"]}
+        }
+      }
+    }
+  }
+}
