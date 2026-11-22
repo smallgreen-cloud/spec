@@ -5,7 +5,7 @@
 
 ## 設計原則
 
-1. **wrangler 設定仍是資源宣告的唯一真相源**。契約檔不重複宣告 Workers / D1 / KV / R2——schema 刻意不提供資源宣告欄位（提供了就會有人填，就會分岔）。契約檔只補 wrangler 管不到的三層：**判定（profile）、驗收（acceptance）、維護（maintenance）**，外加 secrets manifest 與外連宣告。
+1. **資源真相源依託管模式唯一選定**：既有 Cloudflare 路徑用 Wrangler；Sites-only 用 `.openai/hosting.json`，不得另加自架 Wrangler／BYOC。核心契約只補**判定、驗收、維護**與 secrets／外連宣告。Sites install 的 managed_resources 是交接清單，必須與原生 manifest 完全相符，不能取代 manifest。
 2. **由 publish agent 自動生成，防官僚化**。Path B（retrofit）的契約檔由 agent 掃 repo 生成 PR，人只審不填表。
 3. 欄位語意對齊既有標準（`.agent` manifest、Score spec 的 dev/ops 分離哲學），不重造已有輪子；驗收格式無既有標準可借，自創（護城河候選）。
 
@@ -35,11 +35,13 @@
 
 ## test_matrix
 
+Sites-only 的 CON-3 另依 [Sites-only 靜態規則](../profiles/sites-only.md)：加入已驗證 manifest 的 D1/R2 綁定名稱，排除根目錄 Vite 建置入口；已核對版本的開發預覽 CONNECTORS 橋接採精確內容指紋排除，不能全域豁免同名 runtime 引用。無相容 Spec、壞宣告、未宣告 runtime secret 仍 fail。
+
 | REQ | 驗證方式 | 測試類型 | 落點 |
 |---|---|---|---|
 | CON-1 | 合法／缺檔／壞 YAML／schema 違規四類 fixture | fixture truth-table | conformance CI |
 | CON-2 | 帶 `d1_databases` 欄位的 profile.yaml fixture 必被 schema 拒絕 | fixture truth-table | conformance CI |
-| CON-3 | fixture：程式碼引用 `env.FOO` 而 manifest 未列 → fail | fixture truth-table | conformance CI |
+| CON-3 | env.FOO 未列必 fail；Sites 的自訂 D1/R2 binding 通過，建置檔與 runtime 分開；移除預覽 DEV guard、其他 runtime 的 CONNECTORS、未宣告 secret 均必 fail | fixture truth-table | conformance CI |
 | CON-4 | 缺 uninstall 區塊的 acceptance fixture 必 fail | fixture truth-table | conformance CI |
 | CON-5 | 缺 quota watchdog 的 maintenance fixture 必 fail | fixture truth-table | conformance CI |
 | CON-6 | UPSTREAM.md hash 與 profile.yaml 不一致 fixture 必 fail | invariant（雙處一致性） | conformance CI |
